@@ -17,7 +17,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -34,7 +34,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -53,7 +53,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request
             ->setDefaultGetOptions()
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -69,7 +69,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
