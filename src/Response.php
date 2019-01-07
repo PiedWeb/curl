@@ -93,7 +93,11 @@ class Response
         if (isset($this->headers)) {
             $headers = $this->getHeaders();
             if (isset($headers['Set-Cookie'])) {
-                return is_array($headers['Set-Cookie']) ? implode('; ', $headers['Set-Cookie']) : $headers['Set-Cookie'];
+                if (is_array($headers['Set-Cookie'])) {
+                    return implode('; ', $headers['Set-Cookie']);
+                } else {
+                    return $headers['Set-Cookie'];
+                }
             }
         }
     }
