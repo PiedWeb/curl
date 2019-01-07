@@ -22,8 +22,13 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        $this->assertSame(200, $result->getStatusCode());
-        $this->assertSame('', $result->getContent());
+        if ($result instanceof \PiedWeb\Curl\Response) {
+            $this->assertSame(200, $result->getStatusCode());
+            $this->assertSame('', $result->getContent());
+        } else {
+            var_dump($request->getError());
+            $this->assertTrue(is_int($result));
+        }
     }
 
     public function testEffectiveUrl()
@@ -39,9 +44,14 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        $this->assertSame('https://piedweb.com/', $result->getEffectiveUrl());
-        $this->assertSame($url, $result->getUrl());
-        $this->assertTrue(strlen($result->getContent())>10);
+        if ($result instanceof \PiedWeb\Curl\Response) {
+            $this->assertSame('https://piedweb.com/', $result->getEffectiveUrl());
+            $this->assertSame($url, $result->getUrl());
+            $this->assertTrue(strlen($result->getContent())>10);
+        } else {
+            var_dump($request->getError());
+            $this->assertTrue(is_int($result));
+        }
 
     }
 
@@ -74,6 +84,37 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        $this->assertSame(404, $result->getStatusCode());
+        if ($result instanceof \PiedWeb\Curl\Response) {
+            $this->assertSame(404, $result->getStatusCode());
+        } else {
+            var_dump($request->getError());
+            $this->assertTrue(is_int($result));
+        }
+    }
+
+    public function testAllMethods()
+    {
+        $url = 'https://piedweb.com';
+        $request = new Request($url);
+        $request
+            ->setDefaultGetOptions()
+            ->setDefaultSpeedOptions()
+            ->setCookie('hello=1')
+            ->setReferer('https://piedweb.com')
+            ->setUserAgent('Hello :)')
+            ->setDestkopUserAgent()
+            ->setMobileUserAgent()
+            ->setLessJsUserAgent()
+            ->setDownloadOnlyIf($ContentType = ['html', 'jpg']) // @param $ContentType can be a String or an Array
+            ->setUrl($url)
+        ;
+
+        $result = $request->exec();
+        if ($result instanceof \PiedWeb\Curl\Response) {
+            $this->assertSame(200, $result->getStatusCode());
+        } else {
+            var_dump($request->getError());
+            $this->assertTrue(is_int($result));
+        }
     }
 }

@@ -19,9 +19,6 @@ class Request
     /** @var int */
     private $returnHeader = 0;
 
-    /** @var bool */
-    private $gzip = false;
-
     /** @var mixed */
     private $filter;
 
@@ -150,15 +147,15 @@ class Request
     }
 
     /**
-     * An self::setOpt()'s alias to add a referrer to your request.
+     * An self::setOpt()'s alias to add a referer to your request.
      *
-     * @param string $referrer
+     * @param string $referer
      *
      * @return self
      */
-    public function setReferrer($referrer)
+    public function setReferer($referer)
     {
-        $this->setOpt(CURLOPT_REFERER, $referrer);
+        $this->setOpt(CURLOPT_REFERER, $referer);
 
         return $this;
     }
@@ -202,7 +199,6 @@ class Request
     public function setEncodingGzip()
     {
         $this->setOpt(CURLOPT_ENCODING, 'gzip, deflate');
-        $this->gzip = true;
 
         return $this;
     }
@@ -266,10 +262,10 @@ class Request
      */
     public function exec()
     {
-        $return = Response::get($this->handle, $this->url, $this->returnHeader, $this->gzip);
+        $return = Response::get($this->handle, $this->url, $this->returnHeader);
 
         if ($return instanceof Response) {
-            $this->setReferrer($return->getEffectiveUrl());
+            $this->setReferer($return->getEffectiveUrl());
         }
 
         return $return;

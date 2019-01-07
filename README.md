@@ -69,7 +69,7 @@ $r
 
     ->setProxy(string '[scheme]proxy-host:port[:username:passwrd]') // Scheme, username and passwrd are facultatives. Default Scheme is http://
 
-    ->setUrl($url, $resetPreviousOptions)
+    ->setUrl($url)
 
 $requested = $r->exec(); // @return PiedWeb\Curl\Requested or int corresponding to the curl error
 
