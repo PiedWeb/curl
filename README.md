@@ -27,8 +27,17 @@ $ composer require piedweb/curl
 
 Quick Example :
 ``` php
-
-
+$url = 'https://piedweb.com';
+$request = new Request($url);
+$request
+    ->setDefaultSpeedOptions(true)
+    ->setDownloadOnlyIf('text/html')
+    ->setDestkopUserAgent()
+;
+$result = $request->exec();
+if ($result instanceof \PiedWeb\Curl\Response) {
+    $content = $this->getContent();
+}
 ```
 
 All methods :

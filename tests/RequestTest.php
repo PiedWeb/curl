@@ -11,7 +11,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
     public function testNotDownload()
     {
-        $url = 'https://www.google.fr/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';//'https://piedweb.com/assets/img/xl/bg.jpg';
+        $url = 'https://piedweb.com/assets/img/xl/bg.jpg';
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()

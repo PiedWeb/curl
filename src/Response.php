@@ -15,7 +15,7 @@ class Response
     /** @var array * */
     private $info;
 
-    public function get($handle, string $url, int $returnHeader, bool $gzip)
+    public static function get($handle, string $url, int $returnHeader, bool $gzip)
     {
         $content = curl_exec($handle);
 

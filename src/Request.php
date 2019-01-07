@@ -211,7 +211,7 @@ class Request
      * If you want to request the URL with a (http|socks...) proxy (public or private).
      *
      * @param string $proxy [scheme]IP:PORT[:LOGIN:PASSWORD]
-     * Eg. : socks5://98.023.023.02:1098:cUrlRequestProxId:SecretPassword
+     *                      Eg. : socks5://98.023.023.02:1098:cUrlRequestProxId:SecretPassword
      *
      * @return self
      */
