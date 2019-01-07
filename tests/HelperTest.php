@@ -15,4 +15,10 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('http://', Helper::getSchemeFrom($proxy));
     }
 
+    public function testCheckContentType()
+    {
+        $line = 'Content-Type: text/html; charset=utf-8';
+        $expected = 'text/html';
+        $this->assertTrue(Helper::checkContentType($line, $expected));
+    }
 }
