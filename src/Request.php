@@ -169,7 +169,7 @@ class Request
      *
      * @return self
      */
-    public function setUserAgent($ua)
+    public function setUserAgent(string $ua)
     {
         $this->setOpt(CURLOPT_USERAGENT, $ua);
 

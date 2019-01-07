@@ -5,7 +5,7 @@ namespace PiedWeb\Curl;
 trait UserAgentTrait
 {
 
-    abstract public function setUserAgent();
+    abstract public function setUserAgent(string $ua);
 
     /**
      * An self::setUserAgent()'s alias to add an user-agent wich correspond to a Destkop PC.
