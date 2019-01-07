@@ -5,7 +5,7 @@ namespace PiedWeb\Curl;
 class Helper
 {
     /**
-     * Return scheme from proxy string and remove Scheme From proxy
+     * Return scheme from proxy string and remove Scheme From proxy.
      *
      * @param string $proxy
      *
@@ -23,12 +23,13 @@ class Helper
     }
 
     /**
-     * Parse HTTP headers (php HTTP functions but generally, this packet isn't installed)
+     * Parse HTTP headers (php HTTP functions but generally, this packet isn't installed).
+     *
      * @source http://www.php.net/manual/en/function.http-parse-headers.php#112917
      *
      * @param string $raw_headers Contain HTTP headers
      *
-     * @return bool|array an array on success or FALSE on failure.
+     * @return bool|array an array on success or FALSE on failure
      */
     public static function http_parse_headers($raw_headers)
     {
@@ -43,13 +44,13 @@ class Helper
                 if (!isset($headers[$h[0]])) {
                     $headers[$h[0]] = trim($h[1]);
                 } elseif (is_array($headers[$h[0]])) {
-                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
+                    $headers[$h[0]] = array_merge($headers[$h[0]], [trim($h[1])]);
                 } else {
                     $headers[$h[0]] = array_merge([$headers[$h[0]]], [trim($h[1])]);
                 }
                 $key = $h[0];
             } else {
-                if (substr($h[0], 0, 1) == "\t") {
+                if ("\t" == substr($h[0], 0, 1)) {
                     $headers[$key] .= "\r\n\t".trim($h[0]);
                 } elseif (!$key) {
                     $headers[0] = trim($h[0]);
@@ -57,18 +58,20 @@ class Helper
                 trim($h[0]);
             }
         }
+
         return $headers;
     }
 
-    public static function checkContentType($line, $expected) {
-        if (stripos(trim($line), 'content-type') === 0 && stripos($line, $expected) !== false) {
+    public static function checkContentType($line, $expected)
+    {
+        if (0 === stripos(trim($line), 'content-type') && false !== stripos($line, $expected)) {
             return true;
         }
 
         return false;
     }
 
-    /**
+    /*
      * No need anymore
      * Decode a string
      *

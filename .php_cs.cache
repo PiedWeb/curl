@@ -1,0 +1,1 @@
+{"php":"7.2.10-0ubuntu0.18.04.1","version":"2.13.1","rules":{"array_syntax":{"syntax":"short"}},"hashes":{"src\/Response.php":1111513497,"src\/Helper.php":4165267782,"src\/Request.php":2644162168,"src\/UserAgentTrait.php":3411116384}}

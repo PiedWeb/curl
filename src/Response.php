@@ -8,16 +8,13 @@ class Response
 
     private $url;
 
-    /** @var string **/
+    /** @var string * */
     private $header;
-    /** @var string **/
+    /** @var string * */
     private $content;
-    /** @var array **/
+    /** @var array * */
     private $info;
 
-    /**
-     *
-     */
     public function get($handle, string $url, int $returnHeader, bool $gzip)
     {
         $content = curl_exec($handle);
@@ -28,11 +25,9 @@ class Response
 
         $self = new self();
 
-        if ($returnHeader === 2) {
+        if (2 === $returnHeader) {
             $self->header = $content;
-        }
-
-        else {
+        } else {
             if ($returnHeader) { // Remove headers from response
                 $self->header = substr($content, 0, $sHeader = curl_getinfo($handle, CURLINFO_HEADER_SIZE));
                 $content = substr($content, $sHeader);
@@ -42,12 +37,13 @@ class Response
         }
 
         $self->info = curl_getinfo($handle); // curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL)
-        $self->url  = $url;
+        $self->url = $url;
 
         return $self;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
     }
 
     public function getContent()
@@ -56,7 +52,7 @@ class Response
     }
 
     /**
-     * Return header's data return by the request
+     * Return header's data return by the request.
      *
      * @param bool $returnArray True to get an array, false to get a string
      *
@@ -65,7 +61,7 @@ class Response
     public function getHeader(bool $returnArray = true)
     {
         if (isset($this->header)) {
-            return $arrayFormatted === true ? Helper::http_parse_headers($this->header) : $this->header;
+            return true === $arrayFormatted ? Helper::http_parse_headers($this->header) : $this->header;
         }
     }
 
@@ -76,18 +72,19 @@ class Response
     {
         return $this->url;
     }
+
     /**
-     * Return current effective url
+     * Return current effective url.
      *
      * @return string
      */
-    function getEffectiveUrl()
+    public function getEffectiveUrl()
     {
         return isset($this->info['url']) ? $this->info['url'] : null; //curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL);
     }
 
     /**
-     * Return the cookie(s) returned by the request (if there are)
+     * Return the cookie(s) returned by the request (if there are).
      *
      * @return null|array containing the cookies
      */
@@ -102,7 +99,7 @@ class Response
     }
 
     /**
-     * Get information regarding the request
+     * Get information regarding the request.
      *
      * @return array an associative array with the following elements (which correspond to opt), or FALSE on failure
      */
@@ -110,7 +107,6 @@ class Response
     {
         return $this->info;
     }
-
 
     public function getStatusCode()
     {

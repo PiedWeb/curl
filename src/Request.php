@@ -7,7 +7,8 @@ class Request
     use UserAgentTrait;
 
     /**
-     * Curl resource handle
+     * Curl resource handle.
+     *
      * @var resource
      */
     private $handle;
@@ -25,7 +26,7 @@ class Request
     private $filter;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $ur to request
      */
@@ -38,7 +39,7 @@ class Request
     }
 
     /**
-     * Change the URL to cURL
+     * Change the URL to cURL.
      *
      * @param string $url to request
      *
@@ -48,12 +49,12 @@ class Request
     {
         $this->url = $url;
         $this->setOpt(CURLOPT_URL, $url);
+
         return $this;
     }
 
-
     /**
-     * Add a cURL's option
+     * Add a cURL's option.
      *
      * @param int   $option cURL Predefined Constant
      * @param mixed $value
@@ -63,31 +64,32 @@ class Request
     public function setOpt($option, $value)
     {
         curl_setopt($this->handle, $option, $value);
+
         return $this;
     }
 
-
     /**
-     * A short way to set some classic options to cURL a web page
+     * A short way to set some classic options to cURL a web page.
      *
      * @return self
      */
     public function setDefaultGetOptions($connectTimeOut = 5, $timeOut = 10, $dnsCacheTimeOut = 600, $followLocation = true, $maxRedirs = 5)
     {
         $this
-            ->setOpt(CURLOPT_AUTOREFERER,       1)
-            ->setOpt(CURLOPT_FOLLOWLOCATION,    $followLocation)
-            ->setOpt(CURLOPT_MAXREDIRS,         $maxRedirs)
-            ->setOpt(CURLOPT_CONNECTTIMEOUT,    $connectTimeOut)
+            ->setOpt(CURLOPT_AUTOREFERER, 1)
+            ->setOpt(CURLOPT_FOLLOWLOCATION, $followLocation)
+            ->setOpt(CURLOPT_MAXREDIRS, $maxRedirs)
+            ->setOpt(CURLOPT_CONNECTTIMEOUT, $connectTimeOut)
             ->setOpt(CURLOPT_DNS_CACHE_TIMEOUT, $dnsCacheTimeOut)
-            ->setOpt(CURLOPT_TIMEOUT,           $timeOut)
+            ->setOpt(CURLOPT_TIMEOUT, $timeOut)
              //->setOpt(CURLOPT_SSL_VERIFYPEER,    0);
         ;
+
         return $this;
     }
 
     /**
-     * A short way to set some classic options to cURL a web page quickly (but lossing some data like header, cookie...)
+     * A short way to set some classic options to cURL a web page quickly (but lossing some data like header, cookie...).
      *
      * @return self
      */
@@ -97,19 +99,20 @@ class Request
         $this->setOpt(CURLOPT_SSL_VERIFYPEER, 0);
 
         if (!$this->returnHeader) {
-             $this->setOpt(CURLOPT_HEADER,         0);
+            $this->setOpt(CURLOPT_HEADER, 0);
         }
         if (!$cookie) {
-            $this->setOpt(CURLOPT_COOKIE,         0);
+            $this->setOpt(CURLOPT_COOKIE, 0);
         }
         $this->setDefaultGetOptions(5, 10, 600, true, 1);
         $this->setEncodingGzip();
+
         return $this;
     }
 
     /**
      * Call it if you want header informations.
-     * After self::execute(), you would have this informations with getHeader();
+     * After self::execute(), you would have this informations with getHeader();.
      *
      * @return self
      */
@@ -120,14 +123,14 @@ class Request
 
         if ($only) {
             $this->setOpt(CURLOPT_RETURNTRANSFER, 0);
-            $this->setOpt(CURLOPT_NOBODY,    1);
+            $this->setOpt(CURLOPT_NOBODY, 1);
         }
 
         return $this;
     }
 
     /**
-     * An self::setOpt()'s alias to add a cookie to your request
+     * An self::setOpt()'s alias to add a cookie to your request.
      *
      * @param string $cookie
      *
@@ -136,11 +139,12 @@ class Request
     public function setCookie($cookie)
     {
         $this->setOpt(CURLOPT_COOKIE, $cookie);
+
         return $this;
     }
 
     /**
-     * An self::setOpt()'s alias to add a referrer to your request
+     * An self::setOpt()'s alias to add a referrer to your request.
      *
      * @param string $referrer
      *
@@ -149,11 +153,12 @@ class Request
     public function setReferrer($referrer)
     {
         $this->setOpt(CURLOPT_REFERER, $referrer);
+
         return $this;
     }
 
     /**
-     * An self::setOpt()'s alias to add an user-agent to your request
+     * An self::setOpt()'s alias to add an user-agent to your request.
      *
      * @param string $ua
      *
@@ -162,11 +167,12 @@ class Request
     public function setUserAgent($ua)
     {
         $this->setOpt(CURLOPT_USERAGENT, $ua);
+
         return $this;
     }
 
     /**
-     * A short way to set post's options to cURL a web page
+     * A short way to set post's options to cURL a web page.
      *
      * @param mixed if it's an array, will be converted via http build query
      *
@@ -177,12 +183,13 @@ class Request
         $this->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
         $this->setOpt(CURLOPT_POST, 1);
         $this->setOpt(CURLOPT_POSTFIELDS, is_array($post) ? http_build_query($post) : $post);
+
         return $this;
     }
 
     /**
      * If you want to request the URL and hope get the result gzipped.
-     * The output will be automatically uncompress with execute();
+     * The output will be automatically uncompress with execute();.
      *
      * @return self
      */
@@ -190,11 +197,12 @@ class Request
     {
         $this->setOpt(CURLOPT_ENCODING, 'gzip, deflate');
         $this->gzip = true;
+
         return $this;
     }
 
     /**
-     * If you want to request the URL with a (http|socks...) proxy (public or private)
+     * If you want to request the URL with a (http|socks...) proxy (public or private).
      *
      * @param string $proxy [scheme]IP:PORT[:LOGIN:PASSWORD] (Eg. : socks5://98.023.023.02:1098:cUrlRequestProxId:SecretPassword)
      *
@@ -211,12 +219,12 @@ class Request
                 $this->setOpt(CURLOPT_PROXYUSERPWD, $proxy[2].':'.$proxy[3]);
             }
         }
+
         return $this;
     }
 
-
     /**
-     * @param mixed $ContentType  string or array
+     * @param mixed $ContentType string or array
      *
      * @return self
      */
@@ -225,8 +233,9 @@ class Request
         $this->setReturnHeader();
 
         $this->filter = is_array($ContentType) ? $ContentType : [$ContentType];
-        $this->setOpt(CURLOPT_HEADERFUNCTION,  [$this, 'checkHeaderContentType']);
+        $this->setOpt(CURLOPT_HEADERFUNCTION, [$this, 'checkHeaderContentType']);
         $this->setOpt(CURLOPT_NOBODY, 1);
+
         return $this;
     }
 
@@ -244,7 +253,7 @@ class Request
     }
 
     /**
-     * Execute the request
+     * Execute the request.
      *
      * @return Requested
      */
@@ -259,46 +268,45 @@ class Request
         return $return;
     }
 
-
     /**
-     * Return the last error number (curl_errno)
+     * Return the last error number (curl_errno).
      *
-     * @return int the error number or 0 (zero) if no error occurred.
+     * @return int the error number or 0 (zero) if no error occurred
      */
     public function hasError()
     {
         return curl_errno($this->handle);
     }
+
     /**
-     * Return a string containing the last error for the current session (curl_error)
+     * Return a string containing the last error for the current session (curl_error).
      *
-     * @return string the error message or '' (the empty string) if no error occurred.
+     * @return string the error message or '' (the empty string) if no error occurred
      */
     public function getError()
     {
         return curl_error($this->handle);
     }
+
     /**
-     * Get information regarding the request
+     * Get information regarding the request.
      *
      * @param int This may be one of the following constants:
      *            http://php.net/manual/en/function.curl-getinfo.php
      *
-     * @return array|string|FALSE
+     * @return array|string|false
      */
     public function getInfo(?int $opt)
     {
         return $opt ? curl_getinfo($this->handle, $opt) : curl_getinfo($this->handle);
     }
 
-
     /**
      * Close the connexion
-     * Call curl_reset function
+     * Call curl_reset function.
      */
     public function close()
     {
         curl_reset($this->handle);
     }
 }
-
