@@ -61,7 +61,7 @@ class Response
     public function getHeader(bool $returnArray = true)
     {
         if (isset($this->header)) {
-            return true === $arrayFormatted ? Helper::http_parse_headers($this->header) : $this->header;
+            return true === $arrayFormatted ? Helper::httpParseHeaders($this->header) : $this->header;
         }
     }
 

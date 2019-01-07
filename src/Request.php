@@ -73,8 +73,13 @@ class Request
      *
      * @return self
      */
-    public function setDefaultGetOptions($connectTimeOut = 5, $timeOut = 10, $dnsCacheTimeOut = 600, $followLocation = true, $maxRedirs = 5)
-    {
+    public function setDefaultGetOptions(
+        $connectTimeOut = 5,
+        $timeOut = 10,
+        $dnsCacheTimeOut = 600,
+        $followLocation = true,
+        $maxRedirs = 5
+    ) {
         $this
             ->setOpt(CURLOPT_AUTOREFERER, 1)
             ->setOpt(CURLOPT_FOLLOWLOCATION, $followLocation)
@@ -89,7 +94,8 @@ class Request
     }
 
     /**
-     * A short way to set some classic options to cURL a web page quickly (but lossing some data like header, cookie...).
+     * A short way to set some classic options to cURL a web page quickly
+     * (but loosing some data like header, cookie...).
      *
      * @return self
      */
@@ -204,7 +210,8 @@ class Request
     /**
      * If you want to request the URL with a (http|socks...) proxy (public or private).
      *
-     * @param string $proxy [scheme]IP:PORT[:LOGIN:PASSWORD] (Eg. : socks5://98.023.023.02:1098:cUrlRequestProxId:SecretPassword)
+     * @param string $proxy [scheme]IP:PORT[:LOGIN:PASSWORD]
+     * Eg. : socks5://98.023.023.02:1098:cUrlRequestProxId:SecretPassword
      *
      * @return self
      */

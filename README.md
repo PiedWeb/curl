@@ -5,7 +5,7 @@
 # Curl OOP Wrapper
 
 [![Latest Version](https://img.shields.io/github/tag/PiedWeb/Curl.svg?style=flat&label=release)](https://github.com/PiedWeb/Curl/tags)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/PiedWeb/Curl/LICENSE)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/PiedWeb/Curl/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/PiedWeb/Curl/master.svg?style=flat)](https://travis-ci.org/PiedWeb/Curl)
 [![Quality Score](https://img.shields.io/scrutinizer/g/PiedWeb/Curl.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/Curl)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/PiedWeb/Curl.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/Curl/code-structure)
@@ -96,7 +96,7 @@ Please see [contributing](https://dev.piedweb.com/contributing)
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
 
 [![Latest Version](https://img.shields.io/github/tag/PiedWeb/Curl.svg?style=flat&label=release)](https://github.com/PiedWeb/Curl/tags)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/PiedWeb/Curl/LICENSE)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/PiedWeb/Curl/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/PiedWeb/Curl/master.svg?style=flat)](https://travis-ci.org/PiedWeb/Curl)
 [![Quality Score](https://img.shields.io/scrutinizer/g/PiedWeb/Curl.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/Curl)
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/PiedWeb/Curl.svg?style=flat)](https://scrutinizer-ci.com/g/PiedWeb/Curl/code-structure)

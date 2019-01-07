@@ -31,7 +31,7 @@ class Helper
      *
      * @return bool|array an array on success or FALSE on failure
      */
-    public static function http_parse_headers($raw_headers)
+    public static function httpParseHeaders($raw_headers)
     {
         if (function_exists('http_parse_headers')) {
             http_parse_headers($raw_headers);
