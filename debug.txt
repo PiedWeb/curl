@@ -1,0 +1,7 @@
+PHPUnit 6.0.8 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 7.2.10-0ubuntu0.18.04.1
+Configuration: /home/robin/localhost/PiedWeb/Curl/phpunit.xml.dist
+Error:         No code coverage driver is available
+
+bool(false)
