@@ -32,7 +32,9 @@ class Request
         $this->handle = curl_init();
         $this->setOpt(CURLOPT_RETURNTRANSFER, 1);
 
-        $this->setUrl($url);
+        if (null !== $url) {
+            $this->setUrl($url);
+        }
     }
 
     /**
@@ -177,7 +179,7 @@ class Request
     /**
      * A short way to set post's options to cURL a web page.
      *
-     * @param mixed if it's an array, will be converted via http build query
+     * @param mixed $post if it's an array, will be converted via http build query
      *
      * @return self
      */
@@ -258,7 +260,7 @@ class Request
     /**
      * Execute the request.
      *
-     * @return Requested
+     * @return Response
      */
     public function exec()
     {
@@ -294,8 +296,8 @@ class Request
     /**
      * Get information regarding the request.
      *
-     * @param int This may be one of the following constants:
-     *            http://php.net/manual/en/function.curl-getinfo.php
+     * @param int $opt This may be one of the following constants:
+     *                 http://php.net/manual/en/function.curl-getinfo.php
      *
      * @return array|string|false
      */
