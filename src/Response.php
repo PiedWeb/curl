@@ -4,8 +4,6 @@ namespace PiedWeb\Curl;
 
 class Response
 {
-    private $exec;
-
     private $url;
 
     /** @var string * */
