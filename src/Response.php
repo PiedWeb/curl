@@ -9,13 +9,13 @@ class Response
     private $url;
 
     /** @var string * */
-    private $header;
+    private $headers;
     /** @var string * */
     private $content;
     /** @var array * */
     private $info;
 
-    public static function get($handle, string $url, int $returnHeader)
+    public static function get($handle, string $url, int $returnHeaders)
     {
         $content = curl_exec($handle);
 
@@ -25,12 +25,12 @@ class Response
 
         $self = new self();
 
-        if (2 === $returnHeader) {
-            $self->header = $content;
+        if (2 === $returnHeaders) {
+            $self->headers = $content;
         } else {
-            if ($returnHeader) { // Remove headers from response
-                $self->header = substr($content, 0, $sHeader = curl_getinfo($handle, CURLINFO_HEADER_SIZE));
-                $content = substr($content, $sHeader);
+            if ($returnHeaders) { // Remove headerss from response
+                $self->headers = substr($content, 0, $sHeaders = curl_getinfo($handle, CURLINFO_HEADER_SIZE));
+                $content = substr($content, $sHeaders);
             }
 
             $self->content = $content;
@@ -52,16 +52,16 @@ class Response
     }
 
     /**
-     * Return header's data return by the request.
+     * Return headers's data return by the request.
      *
      * @param bool $returnArray True to get an array, false to get a string
      *
-     * @return array|string|null containing header's data
+     * @return array|string|null containing headers's data
      */
-    public function getHeader(bool $returnArray = true)
+    public function getHeaders(bool $returnArray = true)
     {
-        if (isset($this->header)) {
-            return true === $arrayFormatted ? Helper::httpParseHeaders($this->header) : $this->header;
+        if (isset($this->headers)) {
+            return true === $returnArray ? Helper::httpParseHeaders($this->headers) : $this->headers;
         }
     }
 
@@ -90,10 +90,10 @@ class Response
      */
     public function getCookies()
     {
-        if (isset($this->header)) {
-            $header = $this->getHeader();
-            if (isset($header['Set-Cookie'])) {
-                return is_array($header['Set-Cookie']) ? implode('; ', $header['Set-Cookie']) : $header['Set-Cookie'];
+        if (isset($this->headers)) {
+            $headers = $this->getHeaders();
+            if (isset($headers['Set-Cookie'])) {
+                return is_array($headers['Set-Cookie']) ? implode('; ', $headers['Set-Cookie']) : $headers['Set-Cookie'];
             }
         }
     }

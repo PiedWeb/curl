@@ -112,6 +112,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
         if ($result instanceof \PiedWeb\Curl\Response) {
             $this->assertSame(200, $result->getStatusCode());
+
+            $headers = $result->getHeaders();
+            $this->assertTrue(is_array($headers));
+
+            $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
+
         } else {
             var_dump($request->getError());
             $this->assertTrue(is_int($result));

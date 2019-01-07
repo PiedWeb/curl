@@ -11,7 +11,7 @@ class Helper
      *
      * @return string
      */
-    private static function getSchemeFrom(&$proxy)
+    public static function getSchemeFrom(&$proxy)
     {
         if (!preg_match('@^([a-z0-9]*)://@', $proxy, $match)) {
             return 'http://';
@@ -70,18 +70,4 @@ class Helper
 
         return false;
     }
-
-    /*
-     * No need anymore
-     * Decode a string
-     *
-     * @param string $str String to decode
-     *
-     * @return string or FALSE if an error occured
-     *
-    public static function gzdecode(string $str)
-    {
-        return gzinflate(substr($str, 10, -8));
-    }
-    /**/
 }

@@ -74,7 +74,7 @@ $r
 $requested = $r->exec(); // @return PiedWeb\Curl\Requested or int corresponding to the curl error
 
 $requested->getContent(); // @return string
-$requested->getHeader($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
+$requested->getHeaders($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
 $requested->getCookies(); // @return string
 $requested->getEffectiveUrl(); // @return string
 
