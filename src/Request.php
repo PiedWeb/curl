@@ -22,6 +22,9 @@ class Request
     /** @var mixed */
     private $filter;
 
+    /** @var bool */
+    private $optChangeDuringRequest = false;
+
     /**
      * Constructor.
      *
@@ -98,7 +101,7 @@ class Request
      *
      * @return self
      */
-    public function setDefaultSpeedOptions(bool $cookie = false)
+    public function setDefaultSpeedOptions()
     {
         $this->setOpt(CURLOPT_SSL_VERIFYHOST, 0);
         $this->setOpt(CURLOPT_SSL_VERIFYPEER, 0);
@@ -106,9 +109,7 @@ class Request
         if (!$this->returnHeader) {
             $this->setOpt(CURLOPT_HEADER, 0);
         }
-        if (!$cookie) {
-            $this->setOpt(CURLOPT_COOKIE, 0);
-        }
+
         $this->setDefaultGetOptions(5, 10, 600, true, 1);
         $this->setEncodingGzip();
 
@@ -249,6 +250,7 @@ class Request
         if (is_string($line)) {
             foreach ($this->filter as $filter) {
                 if (Helper::checkContentType($line, $filter)) {
+                    $this->optChangeDuringRequest = true;
                     $this->setOpt(CURLOPT_NOBODY, 0); //curl_setopt($handle, CURLOPT_NOBODY, 0);
                 }
             }
@@ -262,9 +264,16 @@ class Request
      *
      * @return Response
      */
-    public function exec()
+    public function exec($optChange = false)
     {
         $return = Response::get($this->handle, $this->url, $this->returnHeader);
+
+        // Permits to transform HEAD request in GET request
+        if ($this->optChangeDuringRequest && false === $optChange) {
+            $this->optChangeDuringRequest = true;
+
+            return $this->exec(true);
+        }
 
         if ($return instanceof Response) {
             $this->setReferer($return->getEffectiveUrl());

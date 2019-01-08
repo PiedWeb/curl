@@ -50,7 +50,7 @@ $r
 
 	// Preselect Options to avoid eternity wait
     ->setDefaultGetOptions($connectTimeOut = 5, $timeOut = 10, $dnsCacheTimeOut = 600, $followLocation = true, $maxRedirs = 5)
-    ->setDefaultSpeedOptions(bool $cookie = false) // no header except if setted, no cookie, 1 redir max, no ssl check
+    ->setDefaultSpeedOptions() // no header except if setted, 1 redir max, no ssl check
 
     ->setReturnHeader($only = false)
     ->setCookie(string $cookie)

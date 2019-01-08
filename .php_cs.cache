@@ -1,1 +1,1 @@
-{"php":"7.2.10-0ubuntu0.18.04.1","version":"2.13.1","rules":{"array_syntax":{"syntax":"short"}},"hashes":{"src\/Response.php":4221948760,"src\/Helper.php":4055717232,"src\/Request.php":1973247706,"src\/UserAgentTrait.php":1134166595}}
+{"php":"7.2.10-0ubuntu0.18.04.1","version":"2.13.1","rules":{"array_syntax":{"syntax":"short"}},"hashes":{"src\/Response.php":3408723043,"src\/Helper.php":4055717232,"src\/Request.php":315831387,"src\/UserAgentTrait.php":1702492799}}

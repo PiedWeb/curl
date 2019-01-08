@@ -9,6 +9,34 @@ use PiedWeb\Curl\Request;
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
 
+    public function testDownloadIfHtml()
+    {
+        $url = 'https://piedweb.com/';
+        $request = new Request($url);
+        $request
+            ->setDefaultGetOptions()
+            ->setDownloadOnlyIf('html')
+            ->setReturnHeader()
+            ->setDestkopUserAgent()
+            ->setEncodingGzip()
+        ;
+        $result = $request->exec();
+
+        if ($result instanceof \PiedWeb\Curl\Response) {
+            $this->assertSame(200, $result->getStatusCode());
+
+            $headers = $result->getHeaders();
+            $this->assertTrue(is_array($headers));
+
+            $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
+            $this->assertTrue(strlen($result->getContent())>10);
+        } else {
+            var_dump($request->getError());
+            $this->assertTrue(is_int($result));
+        }
+
+    }
+
     public function testNotDownload()
     {
         $url = 'https://piedweb.com/assets/img/xl/bg.jpg';

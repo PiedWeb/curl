@@ -4,7 +4,6 @@ namespace PiedWeb\Curl;
 
 trait UserAgentTrait
 {
-
     abstract public function setUserAgent(string $ua);
 
     /**
