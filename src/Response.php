@@ -103,11 +103,12 @@ class Response
     /**
      * Get information regarding the request.
      *
-     * @return array an associative array with the following elements (which correspond to opt), or FALSE on failure
+     * @param string $key to get
+     * @return string|array
      */
-    public function getInfo()
+    public function getInfo(?string $key = null)
     {
-        return $this->info;
+        return $key ? (isset($this->info[$key]) ? $this->info[$key] : null) : $this->info;
     }
 
     public function getStatusCode()
