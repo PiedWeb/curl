@@ -22,18 +22,13 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        if ($result instanceof \PiedWeb\Curl\Response) {
-            $this->assertSame(200, $result->getStatusCode());
+        $this->assertSame(200, $result->getStatusCode());
 
-            $headers = $result->getHeaders();
-            $this->assertTrue(is_array($headers));
+        $headers = $result->getHeaders();
+        $this->assertTrue(is_array($headers));
 
-            $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
-            $this->assertTrue(strlen($result->getContent())>10);
-        } else {
-            var_dump($request->getError());
-            $this->assertTrue(is_int($result));
-        }
+        $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
+        $this->assertTrue(strlen($result->getContent())>10);
 
     }
 
@@ -50,13 +45,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        if ($result instanceof \PiedWeb\Curl\Response) {
-            $this->assertSame(200, $result->getStatusCode());
-            $this->assertSame('', $result->getContent());
-        } else {
-            var_dump($request->getError());
-            $this->assertTrue(is_int($result));
-        }
+        $this->assertSame(200, $result->getStatusCode());
+        $this->assertSame('', $result->getContent());
     }
 
     public function testEffectiveUrl()
@@ -72,14 +62,9 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        if ($result instanceof \PiedWeb\Curl\Response) {
-            $this->assertSame('https://piedweb.com/', $result->getEffectiveUrl());
-            $this->assertSame($url, $result->getUrl());
-            $this->assertTrue(strlen($result->getContent())>10);
-        } else {
-            var_dump($request->getError());
-            $this->assertTrue(is_int($result));
-        }
+        $this->assertSame('https://piedweb.com/', $result->getEffectiveUrl());
+        $this->assertSame($url, $result->getUrl());
+        $this->assertTrue(strlen($result->getContent())>10);
 
     }
 
@@ -112,12 +97,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
         $result = $request->exec();
 
-        if ($result instanceof \PiedWeb\Curl\Response) {
-            $this->assertSame(404, $result->getStatusCode());
-        } else {
-            var_dump($request->getError());
-            $this->assertTrue(is_int($result));
-        }
+        $this->assertSame(404, $result->getStatusCode());
     }
 
     public function testAllMethods()
@@ -138,17 +118,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
 
         $result = $request->exec();
-        if ($result instanceof \PiedWeb\Curl\Response) {
-            $this->assertSame(200, $result->getStatusCode());
 
-            $headers = $result->getHeaders();
-            $this->assertTrue(is_array($headers));
+        $this->assertSame(200, $result->getStatusCode());
 
-            $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
+        $headers = $result->getHeaders();
+        $this->assertTrue(is_array($headers));
 
-        } else {
-            var_dump($request->getError());
-            $this->assertTrue(is_int($result));
-        }
+        $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
     }
 }
