@@ -32,7 +32,7 @@ $request = new Request($url);
 $request
     ->setDefaultSpeedOptions(true)
     ->setDownloadOnlyIf('text/html')
-    ->setDestkopUserAgent()
+    ->setDesktopUserAgent()
 ;
 $result = $request->exec();
 if ($result instanceof \PiedWeb\Curl\Response) {
@@ -57,7 +57,7 @@ $r
     ->setReferer(string $url)
 
     ->setUserAgent(string $ua)
-    ->setDestkopUserAgent()
+    ->setDesktopUserAgent()
     ->setMobileUserAgent()
     ->setLessJsUserAgent()
 

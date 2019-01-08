@@ -17,7 +17,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -40,7 +40,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -57,7 +57,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -76,7 +76,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request
             ->setDefaultGetOptions()
             ->setReturnHeader()
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -92,7 +92,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request
             ->setDefaultGetOptions()
             ->setDownloadOnlyIf('html')
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
         $result = $request->exec();
@@ -110,7 +110,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setCookie('hello=1')
             ->setReferer('https://piedweb.com')
             ->setUserAgent('Hello :)')
-            ->setDestkopUserAgent()
+            ->setDesktopUserAgent()
             ->setMobileUserAgent()
             ->setLessJsUserAgent()
             ->setDownloadOnlyIf($ContentType = ['html', 'jpg']) // @param $ContentType can be a String or an Array
