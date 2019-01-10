@@ -8,7 +8,6 @@ use PiedWeb\Curl\Request;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-
     public function testDownloadIfHtml()
     {
         $url = 'https://piedweb.com/';
@@ -28,8 +27,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($headers));
 
         $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
-        $this->assertTrue(strlen($result->getContent())>10);
-
+        $this->assertTrue(strlen($result->getContent()) > 10);
     }
 
     public function testNotDownload()
@@ -64,14 +62,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame('https://piedweb.com/', $result->getEffectiveUrl());
         $this->assertSame($url, $result->getUrl());
-        $this->assertTrue(strlen($result->getContent())>10);
-
+        $this->assertTrue(strlen($result->getContent()) > 10);
     }
-
 
     public function testCurlError()
     {
-        $url = 'http://www.readze'.rand(100000,99999999).'.com/';
+        $url = 'http://www.readze'.rand(100000, 99999999).'.com/';
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()
@@ -82,7 +78,6 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $this->assertSame(6, $result);
-
     }
 
     public function test404()
@@ -118,6 +113,10 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         ;
 
         $result = $request->exec();
+
+        $this->assertSame($result->getRequest()->getUrl(), $url);
+        $this->assertSame($result->getRequest()->getReturnHeader(), Request::RETURN_HEADER);
+        $this->assertSame($result->getRequest()->getUserAgent(), $request->lessJsUserAgent);
 
         $this->assertSame(200, $result->getStatusCode());
 

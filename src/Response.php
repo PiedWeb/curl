@@ -4,29 +4,34 @@ namespace PiedWeb\Curl;
 
 class Response
 {
-    private $url;
+    /** @var Request */
+    private $request;
 
-    /** @var string * */
+    /** @var string */
     private $headers;
     /** @var string * */
     private $content;
     /** @var array * */
     private $info;
 
-    public static function get($handle, string $url, int $returnHeaders)
+    public static function get(Request $request)
     {
+        $handle = $request->getHandle();
+        $url = $request->getUrl();
+        $returnHeaders = $request->getReturnHeader();
+
         $content = curl_exec($handle);
 
         if (!$content) {
             return curl_errno($handle);
         }
 
-        $self = new self();
+        $self = new self($request);
 
-        if (2 === $returnHeaders) {
+        if (Request::RETURN_HEADER_ONLY === $returnHeaders) {
             $self->headers = $content;
         } else {
-            if ($returnHeaders) { // Remove headerss from response
+            if (Request::RETURN_HEADER === $returnHeaders) { // Remove headers from response
                 $self->headers = substr($content, 0, $sHeaders = curl_getinfo($handle, CURLINFO_HEADER_SIZE));
                 $content = substr($content, $sHeaders);
             }
@@ -35,13 +40,18 @@ class Response
         }
 
         $self->info = curl_getinfo($handle); // curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL)
-        $self->url = $url;
 
         return $self;
     }
 
-    private function __construct()
+    private function __construct(Request $request)
     {
+        $this->request = $request;
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
     }
 
     public function getContent()
@@ -68,7 +78,7 @@ class Response
      */
     public function getUrl()
     {
-        return $this->url;
+        return $this->request->getUrl();
     }
 
     /**
@@ -104,6 +114,7 @@ class Response
      * Get information regarding the request.
      *
      * @param string $key to get
+     *
      * @return string|array
      */
     public function getInfo(?string $key = null)

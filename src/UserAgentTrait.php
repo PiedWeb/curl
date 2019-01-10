@@ -4,6 +4,14 @@ namespace PiedWeb\Curl;
 
 trait UserAgentTrait
 {
+    public $desktopUserAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0';
+
+    public $mobileUserAgent = 'Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36'
+                              .' (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36';
+
+    public $lessJsUserAgent = 'NokiaN70-1/5.0609.2.0.1 Series60/2.8 Profile/MIDP-2.0 Configuration/CLDC-1.1 '
+                              .'UP.Link/6.3.1.13.0';
+
     abstract public function setUserAgent(string $ua);
 
     /**
@@ -13,7 +21,7 @@ trait UserAgentTrait
      */
     public function setDesktopUserAgent()
     {
-        $this->setUserAgent('Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0');
+        $this->setUserAgent($this->desktopUserAgent);
 
         return $this;
     }
@@ -25,8 +33,7 @@ trait UserAgentTrait
      */
     public function setMobileUserAgent()
     {
-        $this->setUserAgent('Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36'
-            .' (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36');
+        $this->setUserAgent($this->mobileUserAgent);
 
         return $this;
     }
@@ -38,8 +45,7 @@ trait UserAgentTrait
      */
     public function setLessJsUserAgent()
     {
-        $this->setUserAgent('NokiaN70-1/5.0609.2.0.1 Series60/2.8 Profile/MIDP-2.0 Configuration/CLDC-1.1 '
-            .'UP.Link/6.3.1.13.0');
+        $this->setUserAgent($this->lessJsUserAgent);
 
         return $this;
     }

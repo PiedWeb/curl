@@ -6,6 +6,9 @@ class Request
 {
     use UserAgentTrait;
 
+    const  RETURN_HEADER_ONLY = 2;
+    const  RETURN_HEADER = 1;
+
     /**
      * Curl resource handle.
      *
@@ -15,6 +18,9 @@ class Request
 
     /** @var string contains targeted URL */
     private $url;
+
+    /** @var string contains current UA */
+    private $userAgent;
 
     /** @var int */
     private $returnHeader = 0;
@@ -38,6 +44,16 @@ class Request
         if (null !== $url) {
             $this->setUrl($url);
         }
+    }
+
+    public function getHandle()
+    {
+        return $this->handle;
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**
@@ -118,14 +134,14 @@ class Request
 
     /**
      * Call it if you want header informations.
-     * After self::execute(), you would have this informations with getHeader();.
+     * After self::exec(), you would have this informations with getHeader();.
      *
      * @return self
      */
     public function setReturnHeader($only = false)
     {
         $this->setOpt(CURLOPT_HEADER, 1);
-        $this->returnHeader = $only ? 2 : 1;
+        $this->returnHeader = $only ? self::RETURN_HEADER_ONLY : self::RETURN_HEADER;
 
         if ($only) {
             $this->setOpt(CURLOPT_RETURNTRANSFER, 0);
@@ -133,6 +149,11 @@ class Request
         }
 
         return $this;
+    }
+
+    public function getReturnHeader()
+    {
+        return $this->returnHeader;
     }
 
     /**
@@ -172,9 +193,16 @@ class Request
      */
     public function setUserAgent(string $ua)
     {
+        $this->userAgent = $ua;
+
         $this->setOpt(CURLOPT_USERAGENT, $ua);
 
         return $this;
+    }
+
+    public function getUserAgent()
+    {
+        return $this->userAgent;
     }
 
     /**
@@ -195,7 +223,7 @@ class Request
 
     /**
      * If you want to request the URL and hope get the result gzipped.
-     * The output will be automatically uncompress with execute();.
+     * The output will be automatically uncompress with exec();.
      *
      * @return self
      */
@@ -266,7 +294,7 @@ class Request
      */
     public function exec($optChange = false)
     {
-        $return = Response::get($this->handle, $this->url, $this->returnHeader);
+        $return = Response::get($this);
 
         // Permits to transform HEAD request in GET request
         if ($this->optChangeDuringRequest && false === $optChange) {

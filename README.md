@@ -53,6 +53,7 @@ $r
     ->setDefaultSpeedOptions() // no header except if setted, 1 redir max, no ssl check
 
     ->setReturnHeader($only = false)
+        ->getReturnHeader() // @return int corresponding to Request::RETURN_HEADER_ONLY or Request::RETURN_HEADER or NULL
     ->setCookie(string $cookie)
     ->setReferer(string $url)
 
@@ -60,6 +61,7 @@ $r
     ->setDesktopUserAgent()
     ->setMobileUserAgent()
     ->setLessJsUserAgent()
+        ->getUserAgent() // @return string
 
     ->setDownloadOnlyIf($ContentType = ['html', 'jpg']) // @param $ContentType can be a String or an Array
 
@@ -70,6 +72,7 @@ $r
     ->setProxy(string '[scheme]proxy-host:port[:username:passwrd]') // Scheme, username and passwrd are facultatives. Default Scheme is http://
 
     ->setUrl($url)
+        ->getUrl()
 
 $requested = $r->exec(); // @return PiedWeb\Curl\Requested or int corresponding to the curl error
 

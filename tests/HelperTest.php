@@ -8,7 +8,6 @@ use PiedWeb\Curl\Helper;
 
 class HelperTest extends \PHPUnit\Framework\TestCase
 {
-
     public function testSchemeFromProxy()
     {
         $proxy = '75.157.242.104:59190';
