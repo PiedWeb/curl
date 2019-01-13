@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiedWeb\Curl\Test;
 
 use PiedWeb\Curl\Request;
+use PiedWeb\Curl\MultipleCheckInHeaders;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,7 +15,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()
-            ->setDownloadOnlyIf('html')
+            ->setDownloadOnlyIf(function ($line) { return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, 'text/html'); })
             ->setReturnHeader()
             ->setDesktopUserAgent()
             ->setEncodingGzip()
@@ -36,7 +37,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()
-            ->setDownloadOnlyIf('html')
+            ->setDownloadOnlyIf('PiedWeb\Curl\Helper::checkContentType')
             ->setReturnHeader()
             ->setDesktopUserAgent()
             ->setEncodingGzip()
@@ -53,7 +54,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()
-            ->setDownloadOnlyIf('html')
+            ->setDownloadOnlyIf('PiedWeb\Curl\Helper::checkContentType')
             ->setReturnHeader()
             ->setDesktopUserAgent()
             ->setEncodingGzip()
@@ -86,7 +87,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()
-            ->setDownloadOnlyIf('html')
+            ->setDownloadOnlyIf('PiedWeb\Curl\Helper::checkContentType')
             ->setDesktopUserAgent()
             ->setEncodingGzip()
         ;
@@ -97,6 +98,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
     public function testAllMethods()
     {
+        $checkHeaders = new MultipleCheckInHeaders();
+
         $url = 'https://piedweb.com';
         $request = new Request($url);
         $request
@@ -108,8 +111,9 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDesktopUserAgent()
             ->setMobileUserAgent()
             ->setLessJsUserAgent()
-            ->setDownloadOnlyIf($ContentType = ['html', 'jpg']) // @param $ContentType can be a String or an Array
             ->setUrl($url)
+            ->setReturnHeader()
+            ->setDownloadOnlyIf([$checkHeaders, 'check'])
         ;
 
         $result = $request->exec();
@@ -124,5 +128,25 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_array($headers));
 
         $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
+
+        $this->assertTrue(strlen($result->getContent()) > 100);
+    }
+
+    public function testMultipleCheckInHeaders()
+    {
+        $checkHeaders = new MultipleCheckInHeaders();
+
+        $url = 'https://piedweb.com/404-error';
+        $request = new Request($url);
+        $request
+            ->setDefaultGetOptions()
+            ->setDefaultSpeedOptions()
+            ->setUserAgent('Hello :)')
+            ->setDownloadOnlyIf([$checkHeaders, 'check'])
+        ;
+
+        $result = $request->exec();
+
+        $this->assertSame('', $result->getContent());
     }
 }

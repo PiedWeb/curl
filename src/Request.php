@@ -258,29 +258,27 @@ class Request
     }
 
     /**
-     * @param mixed $ContentType string or array
+     * @param mixed $func function wich must return boolean
      *
      * @return self
      */
-    public function setDownloadOnlyIf($ContentType = 'text/html')
+    public function setDownloadOnlyIf(callable $func)
     {
         $this->setReturnHeader();
 
-        $this->filter = is_array($ContentType) ? $ContentType : [$ContentType];
-        $this->setOpt(CURLOPT_HEADERFUNCTION, [$this, 'checkHeaderContentType']);
+        $this->filter = $func;
+        $this->setOpt(CURLOPT_HEADERFUNCTION, [$this, 'checkHeader']);
         $this->setOpt(CURLOPT_NOBODY, 1);
 
         return $this;
     }
 
-    public function checkHeaderContentType($handle, $line)
+    public function checkHeader($handle, $line)
     {
         if (is_string($line)) {
-            foreach ($this->filter as $filter) {
-                if (Helper::checkContentType($line, $filter)) {
-                    $this->optChangeDuringRequest = true;
-                    $this->setOpt(CURLOPT_NOBODY, 0); //curl_setopt($handle, CURLOPT_NOBODY, 0);
-                }
+            if (call_user_func($this->filter, $line)) {
+                $this->optChangeDuringRequest = true;
+                $this->setOpt(CURLOPT_NOBODY, 0);
             }
         }
 

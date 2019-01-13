@@ -31,7 +31,7 @@ $url = 'https://piedweb.com';
 $request = new Request($url);
 $request
     ->setDefaultSpeedOptions(true)
-    ->setDownloadOnlyIf('text/html')
+    ->setDownloadOnlyIf('PiedWeb\Curl\Helper::checkContentType') // 'PiedWeb\Curl\Helper::checkStatusCode'
     ->setDesktopUserAgent()
 ;
 $result = $request->exec();
@@ -63,7 +63,7 @@ $r
     ->setLessJsUserAgent()
         ->getUserAgent() // @return string
 
-    ->setDownloadOnlyIf($ContentType = ['html', 'jpg']) // @param $ContentType can be a String or an Array
+    ->setDownloadOnlyIf(callable $func) // @param $ContentType can be a String or an Array
 
     ->setPost(array $post)
 
@@ -81,7 +81,9 @@ $requested->getHeaders($returnArray = true); // @return array Response Header (o
 $requested->getCookies(); // @return string
 $requested->getEffectiveUrl(); // @return string
 
-$r->hasError|getError|getInfo(); // Equivalent to curl function curl_errno|curl_error|curl_getinfo();
+$r->hasError(); // Equivalent to curl function curl_errno
+$r->getError(); // .. curl_error
+$r->getInfo(?string $key = null); // ... curl_getinfo or getting directly the $key value
 ```
 
 ## Change log

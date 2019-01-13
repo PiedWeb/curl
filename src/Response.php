@@ -94,7 +94,7 @@ class Response
     /**
      * Return the cookie(s) returned by the request (if there are).
      *
-     * @return null|array containing the cookies
+     * @return array|null containing the cookies
      */
     public function getCookies()
     {

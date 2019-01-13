@@ -62,12 +62,13 @@ class Helper
         return $headers;
     }
 
-    public static function checkContentType($line, $expected)
+    public static function checkContentType($line, $expected = 'text/html')
     {
-        if (0 === stripos(trim($line), 'content-type') && false !== stripos($line, $expected)) {
-            return true;
-        }
+        return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, $expected);
+    }
 
-        return false;
+    public static function checkStatusCode($line, $expected = 200)
+    {
+        return 0 === stripos(trim($line), 'http') && false !== stripos($line, ' '.$expected.' ');
     }
 }

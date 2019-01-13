@@ -20,4 +20,11 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $expected = 'text/html';
         $this->assertTrue(Helper::checkContentType($line, $expected));
     }
+
+    public function testCheckStatusCode()
+    {
+        $line = 'HTTP/1.1 200 OK';
+        $expected = 200;
+        $this->assertTrue(Helper::checkStatusCode($line, $expected));
+    }
 }
