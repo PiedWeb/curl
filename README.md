@@ -53,7 +53,7 @@ $r
     ->setDefaultSpeedOptions() // no header except if setted, 1 redir max, no ssl check
 
     ->setReturnHeader($only = false)
-        ->getReturnHeader() // @return int corresponding to Request::RETURN_HEADER_ONLY or Request::RETURN_HEADER or NULL
+        ->mustReturnHeaders() // @return int corresponding to Request::RETURN_HEADER_ONLY or Request::RETURN_HEADER or NULL
     ->setCookie(string $cookie)
     ->setReferer(string $url)
 

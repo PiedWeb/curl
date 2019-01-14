@@ -16,8 +16,7 @@ class Response
 
     public static function get(Request $request)
     {
-        $handle = $request->getHandle();
-        $returnHeaders = $request->getReturnHeader();
+        $handle        = $request->getHandle();
 
         $content = curl_exec($handle);
 
@@ -27,10 +26,10 @@ class Response
 
         $self = new self($request);
 
-        if (Request::RETURN_HEADER_ONLY === $returnHeaders) {
+        if (Request::RETURN_HEADER_ONLY === $request->mustReturnHeaders()) {
             $self->headers = $content;
         } else {
-            if (Request::RETURN_HEADER === $returnHeaders) { // Remove headers from response
+            if (Request::RETURN_HEADER === $request->mustReturnHeaders()) { // Remove headers from response
                 $self->headers = substr($content, 0, $sHeaders = curl_getinfo($handle, CURLINFO_HEADER_SIZE));
                 $content = substr($content, $sHeaders);
             }

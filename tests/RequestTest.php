@@ -119,7 +119,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $this->assertSame($result->getRequest()->getUrl(), $url);
-        $this->assertSame($result->getRequest()->getReturnHeader(), Request::RETURN_HEADER);
+        $this->assertSame($result->getRequest()->mustReturnHeaders(), Request::RETURN_HEADER);
         $this->assertSame($result->getRequest()->getUserAgent(), $request->lessJsUserAgent);
 
         $this->assertSame(200, $result->getStatusCode());
@@ -143,10 +143,12 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDefaultSpeedOptions()
             ->setUserAgent('Hello :)')
             ->setDownloadOnlyIf([$checkHeaders, 'check'])
+            ->setReturnHeader(true)
         ;
 
         $result = $request->exec();
 
-        $this->assertSame('', $result->getContent());
+        $this->assertTrue(is_array($result->getHeaders()));
+        $this->assertSame(null, $result->getCookies());
     }
 }
