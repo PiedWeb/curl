@@ -288,7 +288,7 @@ class Request
     /**
      * Execute the request.
      *
-     * @return Response
+     * @return Response|int corresponding to the curl error
      */
     public function exec($optChange = false)
     {
