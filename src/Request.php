@@ -23,7 +23,7 @@ class Request
     private $userAgent;
 
     /** @var int */
-    private $returnHeader = 0;
+    private $returnHeaders = 0;
 
     /** @var mixed */
     private $filter;
@@ -122,7 +122,7 @@ class Request
         $this->setOpt(CURLOPT_SSL_VERIFYHOST, 0);
         $this->setOpt(CURLOPT_SSL_VERIFYPEER, 0);
 
-        if (!$this->returnHeader) {
+        if (!$this->returnHeaders) {
             $this->setOpt(CURLOPT_HEADER, 0);
         }
 
@@ -141,7 +141,7 @@ class Request
     public function setReturnHeader($only = false)
     {
         $this->setOpt(CURLOPT_HEADER, 1);
-        $this->returnHeader = $only ? self::RETURN_HEADER_ONLY : self::RETURN_HEADER;
+        $this->returnHeaders = $only ? self::RETURN_HEADER_ONLY : self::RETURN_HEADER;
 
         if ($only) {
             $this->setOpt(CURLOPT_RETURNTRANSFER, 0);
@@ -151,9 +151,9 @@ class Request
         return $this;
     }
 
-    public function getReturnHeader()
+    public function mustReturnHeaders()
     {
-        return $this->returnHeader;
+        return $this->returnHeaders;
     }
 
     /**
@@ -288,7 +288,7 @@ class Request
     /**
      * Execute the request.
      *
-     * @return Response
+     * @return Response|int corresponding to the curl error
      */
     public function exec($optChange = false)
     {

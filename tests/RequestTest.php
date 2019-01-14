@@ -119,7 +119,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $this->assertSame($result->getRequest()->getUrl(), $url);
-        $this->assertSame($result->getRequest()->getReturnHeader(), Request::RETURN_HEADER);
+        $this->assertSame($result->getRequest()->mustReturnHeaders(), Request::RETURN_HEADER);
         $this->assertSame($result->getRequest()->getUserAgent(), $request->lessJsUserAgent);
 
         $this->assertSame(200, $result->getStatusCode());
