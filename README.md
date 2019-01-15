@@ -40,7 +40,15 @@ if ($result instanceof \PiedWeb\Curl\Response) {
 }
 ```
 
-All methods :
+Static Wrapper Methods :
+``` php
+use PiedWeb\Curl\Request;
+
+Request::get($url); // @return string
+
+```
+
+All Other Methods :
 ``` php
 use PiedWeb\Curl\Request;
 
@@ -78,6 +86,7 @@ $r
 $requested = $r->exec(); // @return PiedWeb\Curl\Requested or int corresponding to the curl error
 
 $requested->getUrl(); // @return string
+$requested->getContentType(); // @return string
 $requested->getContent(); // @return string
 $requested->getHeaders($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
 $requested->getCookies(); // @return string

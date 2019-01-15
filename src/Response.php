@@ -16,7 +16,7 @@ class Response
 
     public static function get(Request $request)
     {
-        $handle        = $request->getHandle();
+        $handle = $request->getHandle();
 
         $content = curl_exec($handle);
 

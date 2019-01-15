@@ -4,7 +4,7 @@ namespace PiedWeb\Curl;
 
 class Request
 {
-    use UserAgentTrait;
+    use UserAgentTrait, StaticWrapperTrait;
 
     const  RETURN_HEADER_ONLY = 2;
     const  RETURN_HEADER = 1;
@@ -133,7 +133,7 @@ class Request
     }
 
     /**
-     * A short way to not follow redirection
+     * A short way to not follow redirection.
      *
      * @return self
      */
