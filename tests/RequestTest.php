@@ -144,11 +144,17 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setUserAgent('Hello :)')
             ->setDownloadOnlyIf([$checkHeaders, 'check'])
             ->setReturnHeader(true)
+            ->setPost('testpost')
         ;
 
         $result = $request->exec();
 
         $this->assertTrue(is_array($result->getHeaders()));
         $this->assertSame(null, $result->getCookies());
+        $this->assertSame(404, $result->getInfo('http_code'));
+        $this->assertSame(0, $result->getRequest()->hasError());
+        $this->assertSame(404, $result->getRequest()->getInfo(CURLINFO_HTTP_CODE));
+
+        $result->getRequest()->close();
     }
 }
