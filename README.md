@@ -51,6 +51,7 @@ $r
 	// Preselect Options to avoid eternity wait
     ->setDefaultGetOptions($connectTimeOut = 5, $timeOut = 10, $dnsCacheTimeOut = 600, $followLocation = true, $maxRedirs = 5)
     ->setDefaultSpeedOptions() // no header except if setted, 1 redir max, no ssl check
+    ->setNoFollowRedirection()
 
     ->setReturnHeader($only = false)
         ->mustReturnHeaders() // @return int corresponding to Request::RETURN_HEADER_ONLY or Request::RETURN_HEADER or NULL
@@ -76,6 +77,7 @@ $r
 
 $requested = $r->exec(); // @return PiedWeb\Curl\Requested or int corresponding to the curl error
 
+$requested->getUrl(); // @return string
 $requested->getContent(); // @return string
 $requested->getHeaders($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
 $requested->getCookies(); // @return string
