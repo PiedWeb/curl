@@ -133,6 +133,19 @@ class Request
     }
 
     /**
+     * A short way to not follow redirection
+     *
+     * @return self
+     */
+    public function setNoFollowRedirection()
+    {
+        return $this
+            ->setOpt(CURLOPT_FOLLOWLOCATION, false)
+            ->setOpt(CURLOPT_MAXREDIRS, 0)
+        ;
+    }
+
+    /**
      * Call it if you want header informations.
      * After self::exec(), you would have this informations with getHeader();.
      *
@@ -242,16 +255,14 @@ class Request
      *
      * @return self
      */
-    public function setProxy($proxy)
+    public function setProxy(string $proxy)
     {
-        if (!empty($proxy)) {
-            $scheme = Helper::getSchemeFrom($proxy);
-            $proxy = explode(':', $proxy);
-            $this->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
-            $this->setOpt(CURLOPT_PROXY, $scheme.$proxy[0].':'.$proxy[1]);
-            if (isset($proxy[2])) {
-                $this->setOpt(CURLOPT_PROXYUSERPWD, $proxy[2].':'.$proxy[3]);
-            }
+        $scheme = Helper::getSchemeFrom($proxy);
+        $proxy = explode(':', $proxy);
+        $this->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
+        $this->setOpt(CURLOPT_PROXY, $scheme.$proxy[0].':'.$proxy[1]);
+        if (isset($proxy[2])) {
+            $this->setOpt(CURLOPT_PROXYUSERPWD, $proxy[2].':'.$proxy[3]);
         }
 
         return $this;

@@ -157,4 +157,19 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $result->getRequest()->close();
     }
+
+    public function testProxy()
+    {
+        $url = 'https://piedweb.com/404-error';
+        $request = new Request($url);
+        $request
+            ->setProxy('75.157.242.104:59190')
+            ->setNoFollowRedirection()
+        ;
+
+        $result = $request->exec();
+
+        $this->assertTrue(is_int($result));
+        $this->assertSame($request->getError(), 'Failed to connect to 75.157.242.104 port 59190: Connection refused');
+    }
 }

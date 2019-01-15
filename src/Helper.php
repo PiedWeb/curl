@@ -17,7 +17,7 @@ class Helper
             return 'http://';
         }
         $scheme = $match[1].'://';
-        $proxy = str_replace($scheme, '', $proxy);
+        $proxy = substr($proxy, strlen($scheme));
 
         return $scheme;
     }
