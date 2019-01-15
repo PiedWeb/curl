@@ -6,7 +6,7 @@ namespace PiedWeb\Curl\Test;
 
 use PiedWeb\Curl\Request;
 
-class RequestTest extends \PHPUnit\Framework\TestCase
+class StaticWrapperTest extends \PHPUnit\Framework\TestCase
 {
     public function testStaticGet()
     {
