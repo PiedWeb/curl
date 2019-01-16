@@ -172,4 +172,24 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(is_int($result));
         $this->assertSame($request->getError(), 'Failed to connect to 75.157.242.104 port 59190: Connection refused');
     }
+
+    public function testAbortIfTooBig()
+    {
+        $url = 'https://piedweb.com';
+        $request = new Request($url);
+        $request->setAbortIfTooBig(1);
+
+        $result = $request->exec();
+        $this->assertSame($result, 42);
+    }
+
+    public function testDownloadOnlyFirstBytes()
+    {
+        $url = 'https://piedweb.com';
+        $request = new Request($url);
+        $request->setDownloadOnly('0-199');
+
+        $result = $request->exec();
+        $this->assertTrue(strlen($result->getContent()) < 300);
+    }
 }

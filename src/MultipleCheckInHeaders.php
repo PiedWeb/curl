@@ -19,7 +19,7 @@ class MultipleCheckInHeaders
 
     public function check($line)
     {
-        if (Helper::checkStatusCode($line, $this->expectedCode)) {
+        if (null === $this->code && Helper::checkStatusCode($line, $this->expectedCode)) {
             $this->code = 200;
         }
 

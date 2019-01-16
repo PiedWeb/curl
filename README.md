@@ -73,6 +73,8 @@ $r
         ->getUserAgent() // @return string
 
     ->setDownloadOnlyIf(callable $func) // @param $ContentType can be a String or an Array
+    ->setAbortIfTooBig(int $tooBig = 200000) // @defaut 2Mo
+    ->setDownloadOnly($range = '0-500')
 
     ->setPost(array $post)
 

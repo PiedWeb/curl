@@ -284,6 +284,31 @@ class Request
         return $this;
     }
 
+    /**
+     * @param int $tooBig Default 2000000 = 2000 Kbytes = 2 Mo
+     *
+     * @return self
+     */
+    public function setAbortIfTooBig(int $tooBig = 2000000)
+    {
+        //$this->setOpt(CURLOPT_BUFFERSIZE, 128); // more progress info
+        $this->setOpt(CURLOPT_NOPROGRESS, false);
+        $this->setOpt(CURLOPT_PROGRESSFUNCTION, function ($ch, $totalBytes, $receivedBytes) use ($tooBig) {
+            if ($receivedBytes > $tooBig) {
+                return 1;
+            }
+        });
+
+        return $this;
+    }
+
+    public function setDownloadOnly($range = '0-500')
+    {
+        $this->setOpt(CURLOPT_RANGE, $range);
+
+        return $this;
+    }
+
     public function checkHeader($handle, $line)
     {
         if (is_string($line)) {
