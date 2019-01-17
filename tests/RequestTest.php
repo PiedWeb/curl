@@ -123,6 +123,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($result->getRequest()->getUserAgent(), $request->lessJsUserAgent);
 
         $this->assertSame(200, $result->getStatusCode());
+        $this->assertSame('text/html', $result->getMimeType());
 
         $headers = $result->getHeaders();
         $this->assertTrue(is_array($headers));
@@ -190,6 +191,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request->setDownloadOnly('0-199');
 
         $result = $request->exec();
+
         $this->assertTrue(strlen($result->getContent()) < 300);
     }
 }

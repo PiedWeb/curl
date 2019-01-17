@@ -67,7 +67,7 @@ class Response
     public function getHeaders(bool $returnArray = true)
     {
         if (isset($this->headers)) {
-            return true === $returnArray ? Helper::httpParseHeaders($this->headers) : $this->headers;
+            return true === $returnArray ? Helper::parseHeader($this->headers) : $this->headers;
         }
     }
 
@@ -128,5 +128,12 @@ class Response
     public function getContentType()
     {
         return $this->info['content_type'];
+    }
+
+    public function getMimeType()
+    {
+        $headers = Helper::parseHeader($this->getContentType());
+
+        return $headers[0][0] ?? null;
     }
 }
