@@ -67,7 +67,7 @@ class Response
     public function getHeaders(bool $returnArray = true)
     {
         if (isset($this->headers)) {
-            return true === $returnArray ? Helper::parseHeader($this->headers) : $this->headers;
+            return true === $returnArray ? Helper::httpParseHeaders($this->headers) : $this->headers;
         }
     }
 
