@@ -85,18 +85,29 @@ $r
     ->setUrl($url)
         ->getUrl()
 
-$requested = $r->exec(); // @return PiedWeb\Curl\Requested or int corresponding to the curl error
+$response = $r->exec(); // @return PiedWeb\Curl\Response or int corresponding to the curl error
 
-$requested->getUrl(); // @return string
-$requested->getContentType(); // @return string
-$requested->getContent(); // @return string
-$requested->getHeaders($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
-$requested->getCookies(); // @return string
-$requested->getEffectiveUrl(); // @return string
+$response->getUrl(); // @return string
+$response->getContentType(); // @return string
+$response->getContent(); // @return string
+$response->getHeaders($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
+$response->getCookies(); // @return string
+$response->getEffectiveUrl(); // @return string
 
 $r->hasError(); // Equivalent to curl function curl_errno
 $r->getError(); // .. curl_error
 $r->getInfo(?string $key = null); // ... curl_getinfo or getting directly the $key value
+
+
+use PiedWeb\Curl\ResponseFromCache;
+
+$response = new ResponseFromCache(  // same methods than Response except getRequest return null
+    string $filePathOrContent,
+    ?string $url = null,
+    array $info = [],
+    $headers = PHP_EOL.PHP_EOL
+);
+
 ```
 
 ## Change log

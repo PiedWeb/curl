@@ -49,6 +49,5 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
         //var_dump(Helper::httpParseHeaders($headers));
         //var_dump(Helper::parseHeader($headers));
-
     }
 }

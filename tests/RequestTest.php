@@ -6,6 +6,8 @@ namespace PiedWeb\Curl\Test;
 
 use PiedWeb\Curl\Request;
 use PiedWeb\Curl\MultipleCheckInHeaders;
+use PiedWeb\Curl\Response;
+use PiedWeb\Curl\ResponseFromCache;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
@@ -193,5 +195,19 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $this->assertTrue(strlen($result->getContent()) < 300);
+    }
+
+    public function testResponseFromCache()
+    {
+        $response = new ResponseFromCache(
+            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html><body><p>Tests</p></body>',
+            'https://piedweb.com/',
+            ['content_type' => 'text/html; charset=UTF-8']
+        );
+
+        $this->assertTrue($response instanceof Response);
+        $this->assertSame($response->getRequest(), null);
+        $this->assertSame($response->getMimeType(), 'text/html');
+        $this->assertSame($response->getContent(), '<!DOCTYPE html><html><body><p>Tests</p></body>');
     }
 }

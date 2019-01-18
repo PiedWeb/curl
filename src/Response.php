@@ -5,14 +5,14 @@ namespace PiedWeb\Curl;
 class Response
 {
     /** @var Request */
-    private $request;
+    protected $request;
 
     /** @var string */
-    private $headers;
+    protected $headers;
     /** @var string * */
-    private $content;
+    protected $content;
     /** @var array * */
-    private $info;
+    protected $info;
 
     public static function get(Request $request)
     {
