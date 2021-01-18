@@ -19,7 +19,7 @@ class ResponseFromCache extends Response
     ) {
         $content = file_exists($filePathOrContent) ? file_get_contents($filePathOrContent) : $filePathOrContent;
 
-        if (!$content) {
+        if (! $content) {
             throw new \Exception($filePath.' doesn\'t exist');
         }
 

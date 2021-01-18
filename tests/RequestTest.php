@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PiedWeb\Curl\Test;
 
-use PiedWeb\Curl\Request;
 use PiedWeb\Curl\MultipleCheckInHeaders;
+use PiedWeb\Curl\Request;
 use PiedWeb\Curl\Response;
 use PiedWeb\Curl\ResponseFromCache;
 
@@ -17,7 +17,9 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request = new Request($url);
         $request
             ->setDefaultGetOptions()
-            ->setDownloadOnlyIf(function ($line) { return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, 'text/html'); })
+            ->setDownloadOnlyIf(function ($line) {
+                return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, 'text/html');
+            })
             ->setReturnHeader()
             ->setDesktopUserAgent()
             ->setEncodingGzip()

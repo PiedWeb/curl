@@ -20,7 +20,7 @@ class Response
 
         $content = curl_exec($handle);
 
-        if (!$content) {
+        if (! $content) {
             return curl_errno($handle);
         }
 

@@ -4,7 +4,8 @@ namespace PiedWeb\Curl;
 
 class Request
 {
-    use UserAgentTrait, StaticWrapperTrait;
+    use UserAgentTrait;
+    use StaticWrapperTrait;
 
     const  RETURN_HEADER_ONLY = 2;
     const  RETURN_HEADER = 1;
@@ -122,7 +123,7 @@ class Request
         $this->setOpt(CURLOPT_SSL_VERIFYHOST, 0);
         $this->setOpt(CURLOPT_SSL_VERIFYPEER, 0);
 
-        if (!$this->returnHeaders) {
+        if (! $this->returnHeaders) {
             $this->setOpt(CURLOPT_HEADER, 0);
         }
 

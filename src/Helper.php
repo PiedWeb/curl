@@ -13,7 +13,7 @@ class Helper
      */
     public static function getSchemeFrom(&$proxy)
     {
-        if (!preg_match('@^([a-z0-9]*)://@', $proxy, $match)) {
+        if (! preg_match('@^([a-z0-9]*)://@', $proxy, $match)) {
             return 'http://';
         }
         $scheme = $match[1].'://';
@@ -41,7 +41,7 @@ class Helper
         foreach (explode("\n", $raw_headers) as $i => $h) {
             $h = explode(':', $h, 2);
             if (isset($h[1])) {
-                if (!isset($headers[$h[0]])) {
+                if (! isset($headers[$h[0]])) {
                     $headers[$h[0]] = trim($h[1]);
                 } elseif (is_array($headers[$h[0]])) {
                     $headers[$h[0]] = array_merge($headers[$h[0]], [trim($h[1])]);
@@ -52,7 +52,7 @@ class Helper
             } else {
                 if ("\t" == substr($h[0], 0, 1)) {
                     $headers[$key] .= "\r\n\t".trim($h[0]);
-                } elseif (!$key) {
+                } elseif (! $key) {
                     $headers[0] = trim($h[0]);
                 }
                 trim($h[0]);
@@ -112,7 +112,7 @@ class Helper
      */
     protected static function normalizeHeader($header)
     {
-        if (!is_array($header)) {
+        if (! is_array($header)) {
             return array_map('trim', explode(',', $header));
         }
         $result = [];
@@ -120,6 +120,7 @@ class Helper
             foreach ((array) $value as $v) {
                 if (false === strpos($v, ',')) {
                     $result[] = $v;
+
                     continue;
                 }
                 foreach (preg_split('/,(?=([^"]*"[^"]*")*[^"]*$)/', $v) as $vv) {

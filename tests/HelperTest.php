@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PiedWeb\Curl\Test;
 
-use PiedWeb\Curl\Request;
 use PiedWeb\Curl\Helper;
+use PiedWeb\Curl\Request;
 
 class HelperTest extends \PHPUnit\Framework\TestCase
 {
