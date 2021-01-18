@@ -84,7 +84,7 @@ class Response
      *
      * @return string
      */
-    public function getEffectiveUrl()
+    public function getEffectiveUrl(): ?string
     {
         return isset($this->info['url']) ? $this->info['url'] : null; //curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL);
     }
