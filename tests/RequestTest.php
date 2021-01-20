@@ -157,7 +157,6 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         if (is_int($result)) {
             var_dump($result);
         } else {
-
             $this->assertTrue(is_array($result->getHeaders()));
             $this->assertSame(null, $result->getCookies());
             $this->assertSame(404, $result->getInfo('http_code'));
