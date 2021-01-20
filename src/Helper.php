@@ -33,12 +33,9 @@ class Helper
      */
     public static function httpParseHeaders($raw_headers)
     {
-        if (function_exists('http_parse_headers')) {
-            http_parse_headers($raw_headers);
-        }
         $headers = [];
         $key = '';
-        foreach (explode("\n", $raw_headers) as $i => $h) {
+        foreach (explode("\n", $raw_headers) as $h) {
             $h = explode(':', $h, 2);
             if (isset($h[1])) {
                 if (! isset($headers[$h[0]])) {
@@ -55,7 +52,6 @@ class Helper
                 } elseif (! $key) {
                     $headers[0] = trim($h[0]);
                 }
-                trim($h[0]);
             }
         }
 

@@ -2,6 +2,8 @@
 
 namespace PiedWeb\Curl;
 
+use Exception;
+
 class Response
 {
     /** @var Request */
@@ -20,7 +22,7 @@ class Response
 
         $content = curl_exec($handle);
 
-        if (! $content) {
+        if (! $content || ! is_string($content)) {
             return curl_errno($handle);
         }
 
@@ -66,9 +68,19 @@ class Response
      */
     public function getHeaders(bool $returnArray = true)
     {
-        if (isset($this->headers)) {
-            return true === $returnArray ? Helper::httpParseHeaders($this->headers) : $this->headers;
+        if (! $this->headers) {
+            return null;
         }
+
+        if (! $returnArray) {
+            return $this->headers;
+        }
+        $parsed = Helper::httpParseHeaders($this->headers);
+        if ($parsed === false) {
+            throw new Exception('Failed to parse Headers `'.$this->headers.'`');
+        }
+
+        return (array) $parsed;
     }
 
     /**
@@ -92,11 +104,11 @@ class Response
     /**
      * Return the cookie(s) returned by the request (if there are).
      *
-     * @return array|null containing the cookies
+     * @return string|null containing the cookies
      */
     public function getCookies()
     {
-        if (isset($this->headers)) {
+        if ($this->headers) {
             $headers = $this->getHeaders();
             if (isset($headers['Set-Cookie'])) {
                 if (is_array($headers['Set-Cookie'])) {
@@ -113,7 +125,7 @@ class Response
      *
      * @param string $key to get
      *
-     * @return string|array
+     * @return string|array|null
      */
     public function getInfo(?string $key = null)
     {

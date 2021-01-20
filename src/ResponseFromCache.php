@@ -20,7 +20,7 @@ class ResponseFromCache extends Response
         $content = file_exists($filePathOrContent) ? file_get_contents($filePathOrContent) : $filePathOrContent;
 
         if (! $content) {
-            throw new \Exception($filePath.' doesn\'t exist');
+            throw new \Exception($filePathOrContent.' doesn\'t exist');
         }
 
         if (false !== $headers) {
@@ -43,18 +43,17 @@ class ResponseFromCache extends Response
         return $this->url;
     }
 
-    public function getEffectiveUrl()
+    public function getEffectiveUrl(): ?string
     {
         return $this->url;
     }
 
     public function getStatusCode()
     {
-        if (isset($this->headers)) {
+        if ($this->headers) {
             $headers = $this->getHeaders();
-            list($http, $status) = explode(' ', $headers[0], 2);
 
-            return $status;
+            return explode(' ', $headers[0], 2)[1];
         }
 
         return $this->getInfo('http_code');
@@ -62,7 +61,7 @@ class ResponseFromCache extends Response
 
     public function getContentType()
     {
-        if (isset($this->headers)) {
+        if ($this->headers) {
             $headers = $this->getHeaders();
             if (isset($headers['content-type'])) {
                 return $headers['content-type'];

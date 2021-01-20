@@ -294,6 +294,7 @@ class Request
     {
         //$this->setOpt(CURLOPT_BUFFERSIZE, 128); // more progress info
         $this->setOpt(CURLOPT_NOPROGRESS, false);
+        /** @psalm-suppress UnusedClosureParam */
         $this->setOpt(CURLOPT_PROGRESSFUNCTION, function ($ch, $totalBytes, $receivedBytes) use ($tooBig) {
             if ($receivedBytes > $tooBig) {
                 return 1;
