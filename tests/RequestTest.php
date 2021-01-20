@@ -175,7 +175,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $this->assertTrue(is_int($result));
-        $this->assertSame($request->getError(), 'Failed to connect to 75.157.242.104 port 59190: Connection refused');
+        $this->assertStringContainsString('Failed to connect', $request->getError());
     }
 
     public function testAbortIfTooBig()
