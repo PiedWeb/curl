@@ -45,7 +45,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $headers = $result->getHeaders(false);
-        $this->assertTrue(is_string($headers));
+        $this->assertTrue(\is_string($headers));
 
         //var_dump(Helper::httpParseHeaders($headers));
         //var_dump(Helper::parseHeader($headers));

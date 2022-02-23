@@ -8,14 +8,14 @@ class ResponseFromCache extends Response
     protected $url;
 
     /**
-     * @param string $filePath
-     * @param mixed  $headers  could be a string (the separator between headers and content or FALSE
+     * @param mixed  $headersSeparator could be a string (the separator between headers and content or FALSE
+     * @param array<string, int|string> $info
      */
     public function __construct(
         string $filePathOrContent,
         ?string $url = null,
         array $info = [],
-        $headers = PHP_EOL.PHP_EOL
+        $headersSeparator = \PHP_EOL.\PHP_EOL
     ) {
         $content = file_exists($filePathOrContent) ? file_get_contents($filePathOrContent) : $filePathOrContent;
 
@@ -23,22 +23,22 @@ class ResponseFromCache extends Response
             throw new \Exception($filePathOrContent.' doesn\'t exist');
         }
 
-        if (false !== $headers) {
-            list($this->headers, $this->content) = explode($headers, $content, 2);
+        if (false !== $headersSeparator && \is_string($headersSeparator) && '' !== $headersSeparator) {
+            list($this->headers, $this->content) = explode($headersSeparator, $content, 2);
         } else {
             $this->content = $content;
         }
 
         $this->info = $info;
-        $this->url = $url;
+        $this->url = (string) $url;
     }
 
-    public function getRequest()
+    public function getRequest(): ?Request
     {
-        return null;
+        return null; // todo serialize request to return it even from cache
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -48,26 +48,24 @@ class ResponseFromCache extends Response
         return $this->url;
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         if ($this->headers) {
             $headers = $this->getHeaders();
 
-            return explode(' ', $headers[0], 2)[1];
+            return (int) explode(' ', $headers[0], 2)[1]; // @phpstan-ignore-line
         }
 
-        return $this->getInfo('http_code');
+        return (int) $this->getInfo('http_code');
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
-        if ($this->headers) {
-            $headers = $this->getHeaders();
-            if (isset($headers['content-type'])) {
-                return $headers['content-type'];
-            }
+        $headers = $this->getHeaders();
+        if (null !== $headers && isset($headers['content-type'])) { // @phpstan-ignore-line
+                return $headers['content-type']; // @phpstan-ignore-line
         }
 
-        return $this->getInfo('content_type');
+        return $this->getInfo('content_type');  // @phpstan-ignore-line
     }
 }

@@ -12,6 +12,6 @@ class StaticWrapperTest extends \PHPUnit\Framework\TestCase
     {
         $url = 'https://dev.piedweb.com/robots.txt';
         $result = Request::get($url);
-        $this->assertTrue(strlen($result) > 10);
+        $this->assertTrue(\strlen($result) > 10);
     }
 }

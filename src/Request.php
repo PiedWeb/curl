@@ -2,57 +2,50 @@
 
 namespace PiedWeb\Curl;
 
+use CurlHandle;
+
 class Request
 {
-    use UserAgentTrait;
     use StaticWrapperTrait;
+    use UserAgentTrait;
 
-    const  RETURN_HEADER_ONLY = 2;
-    const  RETURN_HEADER = 1;
+    public const RETURN_HEADER_ONLY = 2;
 
-    /**
-     * Curl resource handle.
-     *
-     * @var resource
-     */
-    private $handle;
+    public const RETURN_HEADER = 1;
+
+    private CurlHandle $handle;
 
     /** @var string contains targeted URL */
-    private $url;
+    private string $url;
 
     /** @var string contains current UA */
-    private $userAgent;
+    private string $userAgent;
 
-    /** @var int */
-    private $returnHeaders = 0;
-
-    /** @var mixed */
-    private $filter;
-
-    /** @var bool */
-    private $optChangeDuringRequest = false;
+    private int $returnHeaders = 0;
 
     /**
-     * Constructor.
-     *
-     * @param string $ur to request
+     * @var callable
      */
+    private $filter;
+
+    private bool $optChangeDuringRequest = false;
+
     public function __construct(?string $url = null)
     {
-        $this->handle = curl_init();
-        $this->setOpt(CURLOPT_RETURNTRANSFER, 1);
+        $this->handle = \Safe\curl_init();
+        $this->setOpt(\CURLOPT_RETURNTRANSFER, 1);
 
         if (null !== $url) {
             $this->setUrl($url);
         }
     }
 
-    public function getHandle()
+    public function getHandle(): CurlHandle
     {
         return $this->handle;
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -61,13 +54,11 @@ class Request
      * Change the URL to cURL.
      *
      * @param string $url to request
-     *
-     * @return self
      */
-    public function setUrl(string $url)
+    public function setUrl(string $url): self
     {
         $this->url = $url;
-        $this->setOpt(CURLOPT_URL, $url);
+        $this->setOpt(\CURLOPT_URL, $url);
 
         return $this;
     }
@@ -77,10 +68,8 @@ class Request
      *
      * @param int   $option cURL Predefined Constant
      * @param mixed $value
-     *
-     * @return self
      */
-    public function setOpt($option, $value)
+    public function setOpt(int $option, $value): self
     {
         curl_setopt($this->handle, $option, $value);
 
@@ -89,24 +78,22 @@ class Request
 
     /**
      * A short way to set some classic options to cURL a web page.
-     *
-     * @return self
      */
     public function setDefaultGetOptions(
-        $connectTimeOut = 5,
-        $timeOut = 10,
-        $dnsCacheTimeOut = 600,
-        $followLocation = true,
-        $maxRedirs = 5
-    ) {
+        int $connectTimeOut = 5,
+        int $timeOut = 10,
+        int $dnsCacheTimeOut = 600,
+        bool $followLocation = true,
+        int $maxRedirs = 5,
+        bool $autoReferer = true
+    ): self {
         $this
-            ->setOpt(CURLOPT_AUTOREFERER, 1)
-            ->setOpt(CURLOPT_FOLLOWLOCATION, $followLocation)
-            ->setOpt(CURLOPT_MAXREDIRS, $maxRedirs)
-            ->setOpt(CURLOPT_CONNECTTIMEOUT, $connectTimeOut)
-            ->setOpt(CURLOPT_DNS_CACHE_TIMEOUT, $dnsCacheTimeOut)
-            ->setOpt(CURLOPT_TIMEOUT, $timeOut)
-             //->setOpt(CURLOPT_SSL_VERIFYPEER,    0);
+            ->setOpt(\CURLOPT_AUTOREFERER, $autoReferer)
+            ->setOpt(\CURLOPT_FOLLOWLOCATION, $followLocation)
+            ->setOpt(\CURLOPT_MAXREDIRS, $maxRedirs)
+            ->setOpt(\CURLOPT_CONNECTTIMEOUT, $connectTimeOut)
+            ->setOpt(\CURLOPT_DNS_CACHE_TIMEOUT, $dnsCacheTimeOut)
+            ->setOpt(\CURLOPT_TIMEOUT, $timeOut)
         ;
 
         return $this;
@@ -115,16 +102,14 @@ class Request
     /**
      * A short way to set some classic options to cURL a web page quickly
      * (but loosing some data like header, cookie...).
-     *
-     * @return self
      */
-    public function setDefaultSpeedOptions()
+    public function setDefaultSpeedOptions(): self
     {
-        $this->setOpt(CURLOPT_SSL_VERIFYHOST, 0);
-        $this->setOpt(CURLOPT_SSL_VERIFYPEER, 0);
+        $this->setOpt(\CURLOPT_SSL_VERIFYHOST, 0);
+        $this->setOpt(\CURLOPT_SSL_VERIFYPEER, 0);
 
         if (! $this->returnHeaders) {
-            $this->setOpt(CURLOPT_HEADER, 0);
+            $this->setOpt(\CURLOPT_HEADER, 0);
         }
 
         $this->setDefaultGetOptions(5, 10, 600, true, 1);
@@ -135,86 +120,70 @@ class Request
 
     /**
      * A short way to not follow redirection.
-     *
-     * @return self
      */
-    public function setNoFollowRedirection()
+    public function setNoFollowRedirection(): self
     {
         return $this
-            ->setOpt(CURLOPT_FOLLOWLOCATION, false)
-            ->setOpt(CURLOPT_MAXREDIRS, 0)
+            ->setOpt(\CURLOPT_FOLLOWLOCATION, false)
+            ->setOpt(\CURLOPT_MAXREDIRS, 0)
         ;
     }
 
     /**
      * Call it if you want header informations.
      * After self::exec(), you would have this informations with getHeader();.
-     *
-     * @return self
      */
-    public function setReturnHeader($only = false)
+    public function setReturnHeader(bool $only = false): self
     {
-        $this->setOpt(CURLOPT_HEADER, 1);
+        $this->setOpt(\CURLOPT_HEADER, 1);
         $this->returnHeaders = $only ? self::RETURN_HEADER_ONLY : self::RETURN_HEADER;
 
         if ($only) {
-            $this->setOpt(CURLOPT_RETURNTRANSFER, 0);
-            $this->setOpt(CURLOPT_NOBODY, 1);
+            $this->setOpt(\CURLOPT_RETURNTRANSFER, 0);
+            $this->setOpt(\CURLOPT_NOBODY, 1);
         }
 
         return $this;
     }
 
-    public function mustReturnHeaders()
+    public function mustReturnHeaders(): int
     {
         return $this->returnHeaders;
     }
 
     /**
      * An self::setOpt()'s alias to add a cookie to your request.
-     *
-     * @param string $cookie
-     *
-     * @return self
      */
-    public function setCookie($cookie)
+    public function setCookie(string $cookie): self
     {
-        $this->setOpt(CURLOPT_COOKIE, $cookie);
+        $this->setOpt(\CURLOPT_COOKIE, $cookie);
 
         return $this;
     }
 
     /**
      * An self::setOpt()'s alias to add a referer to your request.
-     *
-     * @param string $referer
-     *
-     * @return self
      */
-    public function setReferer($referer)
+    public function setReferer(string $referer): self
     {
-        $this->setOpt(CURLOPT_REFERER, $referer);
+        $this->setOpt(\CURLOPT_REFERER, $referer);
 
         return $this;
     }
 
     /**
      * An self::setOpt()'s alias to add an user-agent to your request.
-     *
-     * @param string $ua
-     *
-     * @return self
      */
-    public function setUserAgent(string $ua)
+    public function setUserAgent(string $ua): self
     {
         $this->userAgent = $ua;
 
-        $this->setOpt(CURLOPT_USERAGENT, $ua);
+        $this->setOpt(\CURLOPT_USERAGENT, $ua);
 
         return $this;
     }
 
-    public function getUserAgent()
+    public function getUserAgent(): string
     {
         return $this->userAgent;
     }
@@ -228,9 +197,9 @@ class Request
      */
     public function setPost($post)
     {
-        $this->setOpt(CURLOPT_CUSTOMREQUEST, 'POST');
-        $this->setOpt(CURLOPT_POST, 1);
-        $this->setOpt(CURLOPT_POSTFIELDS, is_array($post) ? http_build_query($post) : $post);
+        $this->setOpt(\CURLOPT_CUSTOMREQUEST, 'POST');
+        $this->setOpt(\CURLOPT_POST, 1);
+        $this->setOpt(\CURLOPT_POSTFIELDS, \is_array($post) ? http_build_query($post) : $post);
 
         return $this;
     }
@@ -238,12 +207,10 @@ class Request
     /**
      * If you want to request the URL and hope get the result gzipped.
      * The output will be automatically uncompress with exec();.
-     *
-     * @return self
      */
-    public function setEncodingGzip()
+    public function setEncodingGzip(): self
     {
-        $this->setOpt(CURLOPT_ENCODING, 'gzip, deflate');
+        $this->setOpt(\CURLOPT_ENCODING, 'gzip, deflate');
 
         return $this;
     }
@@ -253,49 +220,43 @@ class Request
      *
      * @param string $proxy [scheme]IP:PORT[:LOGIN:PASSWORD]
      *                      Eg. : socks5://98.023.023.02:1098:cUrlRequestProxId:SecretPassword
-     *
-     * @return self
      */
-    public function setProxy(string $proxy)
+    public function setProxy(string $proxy): self
     {
         $scheme = Helper::getSchemeFrom($proxy);
         $proxy = explode(':', $proxy);
-        $this->setOpt(CURLOPT_HTTPPROXYTUNNEL, 1);
-        $this->setOpt(CURLOPT_PROXY, $scheme.$proxy[0].':'.$proxy[1]);
+        $this->setOpt(\CURLOPT_HTTPPROXYTUNNEL, 1);
+        $this->setOpt(\CURLOPT_PROXY, $scheme.$proxy[0].':'.$proxy[1]);
         if (isset($proxy[2])) {
-            $this->setOpt(CURLOPT_PROXYUSERPWD, $proxy[2].':'.$proxy[3]);
+            $this->setOpt(\CURLOPT_PROXYUSERPWD, $proxy[2].':'.$proxy[3]);
         }
 
         return $this;
     }
 
     /**
-     * @param mixed $func function wich must return boolean
-     *
-     * @return self
+     * @param callable $func function wich must return boolean
      */
-    public function setDownloadOnlyIf(callable $func)
+    public function setDownloadOnlyIf(callable $func): self
     {
         $this->setReturnHeader();
 
         $this->filter = $func;
-        $this->setOpt(CURLOPT_HEADERFUNCTION, [$this, 'checkHeader']);
-        $this->setOpt(CURLOPT_NOBODY, 1);
+        $this->setOpt(\CURLOPT_HEADERFUNCTION, [$this, 'checkHeader']);
+        $this->setOpt(\CURLOPT_NOBODY, 1);
 
         return $this;
     }
 
     /**
      * @param int $tooBig Default 2000000 = 2000 Kbytes = 2 Mo
-     *
-     * @return self
      */
-    public function setAbortIfTooBig(int $tooBig = 2000000)
+    public function setAbortIfTooBig(int $tooBig = 2000000): self
     {
         //$this->setOpt(CURLOPT_BUFFERSIZE, 128); // more progress info
-        $this->setOpt(CURLOPT_NOPROGRESS, false);
-        /** @psalm-suppress UnusedClosureParam */
-        $this->setOpt(CURLOPT_PROGRESSFUNCTION, function ($ch, $totalBytes, $receivedBytes) use ($tooBig) {
+        $this->setOpt(\CURLOPT_NOPROGRESS, false);
+        /* @psalm-suppress UnusedClosureParam */
+        $this->setOpt(\CURLOPT_PROGRESSFUNCTION, function ($ch, $totalBytes, $receivedBytes) use ($tooBig) {
             if ($receivedBytes > $tooBig) {
                 return 1;
             }
@@ -304,23 +265,22 @@ class Request
         return $this;
     }
 
-    public function setDownloadOnly($range = '0-500')
+    public function setDownloadOnly(string $range = '0-500'): self
     {
-        $this->setOpt(CURLOPT_RANGE, $range);
+        $this->setOpt(\CURLOPT_RANGE, $range);
 
         return $this;
     }
 
-    public function checkHeader($handle, $line)
+    public function checkHeader(CurlHandle $handle, string $line): int
     {
-        if (is_string($line)) {
-            if (call_user_func($this->filter, $line)) {
+            if (\call_user_func($this->filter, $line)) {
                 $this->optChangeDuringRequest = true;
-                $this->setOpt(CURLOPT_NOBODY, 0);
+                $this->setOpt(\CURLOPT_NOBODY, 0);
             }
-        }
 
-        return strlen($line);
+
+        return \strlen($line);
     }
 
     /**
@@ -328,7 +288,7 @@ class Request
      *
      * @return Response|int corresponding to the curl error
      */
-    public function exec($optChange = false)
+    public function exec(bool $optChange = false)
     {
         $return = Response::get($this);
 
@@ -339,11 +299,22 @@ class Request
             return $this->exec(true);
         }
 
-        if ($return instanceof Response) {
-            $this->setReferer($return->getEffectiveUrl());
+        if ($return instanceof Response && ($effectiveUrl = $return->getEffectiveUrl()) !== null) {
+            $this->setReferer($effectiveUrl);
         }
 
         return $return;
+    }
+
+    public function getResponse(): ?Response
+    {
+        $response = $this->exec();
+
+        if (\is_int($response)) {
+            return null;
+        }
+
+        return $response;
     }
 
     /**
@@ -351,7 +322,7 @@ class Request
      *
      * @return int the error number or 0 (zero) if no error occurred
      */
-    public function hasError()
+    public function hasError(): int
     {
         return curl_errno($this->handle);
     }
@@ -361,7 +332,7 @@ class Request
      *
      * @return string the error message or '' (the empty string) if no error occurred
      */
-    public function getError()
+    public function getError(): string
     {
         return curl_error($this->handle);
     }
@@ -372,18 +343,34 @@ class Request
      * @param int $opt This may be one of the following constants:
      *                 http://php.net/manual/en/function.curl-getinfo.php
      *
-     * @return array|string|false
+     * @return string|array<string, string> If opt is given, returns its value as a string. Otherwise, returns an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "request_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time"
      */
-    public function getInfo(?int $opt)
+    public function getInfo(?int $opt = null)
     {
-        return $opt ? curl_getinfo($this->handle, $opt) : curl_getinfo($this->handle);
+        return curl_getinfo($this->handle, $opt); // @phpstan-ignore-line
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getRequestInfo(int $opt)
+    {
+        return curl_getinfo($this->handle, $opt); // @phpstan-ignore-line
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getRequestInfos(): array
+    {
+        return curl_getinfo($this->handle);  // @phpstan-ignore-line
     }
 
     /**
      * Close the connexion
      * Call curl_reset function.
      */
-    public function close()
+    public function close(): void
     {
         curl_reset($this->handle);
     }

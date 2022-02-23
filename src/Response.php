@@ -9,20 +9,24 @@ class Response
     /** @var Request */
     protected $request;
 
-    /** @var string */
-    protected $headers;
+    protected string $headers = '';
+
     /** @var string * */
-    protected $content;
-    /** @var array * */
+    protected string $content;
+
+    /** @var array<string, int|string>  an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "request_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time" */
     protected $info;
 
+    /**
+     * @return self|int
+     */
     public static function get(Request $request)
     {
         $handle = $request->getHandle();
 
         $content = curl_exec($handle);
 
-        if (! $content || ! is_string($content)) {
+        if (false === $content) {
             return curl_errno($handle);
         }
 
@@ -32,14 +36,14 @@ class Response
             $self->headers = $content;
         } else {
             if (Request::RETURN_HEADER === $request->mustReturnHeaders()) { // Remove headers from response
-                $self->headers = substr($content, 0, $sHeaders = curl_getinfo($handle, CURLINFO_HEADER_SIZE));
+                $self->headers = substr($content, 0, $sHeaders = (int) $request->getRequestInfo(\CURLINFO_HEADER_SIZE));
                 $content = substr($content, $sHeaders);
             }
 
             $self->content = $content;
         }
 
-        $self->info = curl_getinfo($handle); // curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL)
+        $self->info = $request->getRequestInfos();
 
         return $self;
     }
@@ -49,12 +53,12 @@ class Response
         $this->request = $request;
     }
 
-    public function getRequest()
+    public function getRequest(): ?Request
     {
         return $this->request;
     }
 
-    public function getContent()
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -64,11 +68,11 @@ class Response
      *
      * @param bool $returnArray True to get an array, false to get a string
      *
-     * @return array|string|null containing headers's data
+     * @return array<int|string, string|string[]>|string|null containing headers's data
      */
     public function getHeaders(bool $returnArray = true)
     {
-        if (! $this->headers) {
+        if ('' === $this->headers) {
             return null;
         }
 
@@ -76,7 +80,7 @@ class Response
             return $this->headers;
         }
         $parsed = Helper::httpParseHeaders($this->headers);
-        if ($parsed === false) {
+        if ([] === $parsed) {
             throw new Exception('Failed to parse Headers `'.$this->headers.'`');
         }
 
@@ -86,7 +90,7 @@ class Response
     /**
      * @return string requested url
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->request->getUrl();
     }
@@ -98,7 +102,8 @@ class Response
      */
     public function getEffectiveUrl(): ?string
     {
-        return isset($this->info['url']) ? $this->info['url'] : null; //curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL);
+        return isset($this->info['url']) ? (string) $this->info['url'] : null;
+        //curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL);
     }
 
     /**
@@ -108,16 +113,16 @@ class Response
      */
     public function getCookies()
     {
-        if ($this->headers) {
-            $headers = $this->getHeaders();
-            if (isset($headers['Set-Cookie'])) {
-                if (is_array($headers['Set-Cookie'])) {
-                    return implode('; ', $headers['Set-Cookie']);
-                } else {
-                    return $headers['Set-Cookie'];
-                }
+        $headers = $this->getHeaders();
+        if (null !== $headers && \is_array($headers) && isset($headers['Set-Cookie'])) {
+            if (\is_array($headers['Set-Cookie'])) {
+                return implode('; ', $headers['Set-Cookie']);
+            } else {
+                return $headers['Set-Cookie'];
             }
         }
+
+        return null;
     }
 
     /**
@@ -125,24 +130,24 @@ class Response
      *
      * @param string $key to get
      *
-     * @return string|array|null
+     * @return int|string|array<string, string|int>|null
      */
     public function getInfo(?string $key = null)
     {
         return $key ? (isset($this->info[$key]) ? $this->info[$key] : null) : $this->info;
     }
 
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
-        return $this->info['http_code'];
+        return (int) $this->info['http_code'];
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
-        return $this->info['content_type'];
+        return (string) $this->info['content_type'];
     }
 
-    public function getMimeType()
+    public function getMimeType(): ?string
     {
         $headers = Helper::parseHeader($this->getContentType());
 

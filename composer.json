@@ -17,11 +17,21 @@
   ],
   "require": {
     "php": "^7.1|^8.0",
-    "vimeo/psalm": "^4.4"
+    "thecodingmachine/safe": "^2.1"
   },
   "require-dev": {
-      
-        "phpunit/phpunit": "^9.5"
+    "friendsofphp/php-cs-fixer": "^3.2",
+    "phpstan/phpstan": "^1.0",
+    "phpunit/phpunit": "^9.5",
+    "symfony/debug": "^4.4",
+    "vimeo/psalm": "^4",
+    "symfony/var-dumper": "^6.0"
+  },
+  "scripts": {
+    "psalm": "vendor/bin/psalm --no-suggestions --no-cache",
+    "stan": "vendor/bin/phpstan analyze src",
+    "test": "vendor/bin/phpunit --stop-on-failure",
+    "format": "vendor/bin/php-cs-fixer fix"
   },
   "autoload": {
     "psr-4": {
@@ -32,7 +42,5 @@
     "psr-4": {
       "PiedWeb\\Curl\\": "tests"
     }
-  },
-  "scripts": {
   }
 }

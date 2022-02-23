@@ -29,10 +29,10 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(200, $result->getStatusCode());
 
         $headers = $result->getHeaders();
-        $this->assertTrue(is_array($headers));
+        $this->assertTrue(\is_array($headers));
 
         $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
-        $this->assertTrue(strlen($result->getContent()) > 10);
+        $this->assertTrue(\strlen($result->getContent()) > 10);
     }
 
     public function testNotDownload()
@@ -67,7 +67,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame('https://piedweb.com/', $result->getEffectiveUrl());
         $this->assertSame($url, $result->getUrl());
-        $this->assertTrue(strlen($result->getContent()) > 10);
+        $this->assertTrue(\strlen($result->getContent()) > 10);
     }
 
     public function testCurlError()
@@ -130,11 +130,11 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('text/html', $result->getMimeType());
 
         $headers = $result->getHeaders();
-        $this->assertTrue(is_array($headers));
+        $this->assertTrue(\is_array($headers));
 
         $this->assertSame('text/html; charset=UTF-8', $result->getContentType());
 
-        $this->assertTrue(strlen($result->getContent()) > 100);
+        $this->assertTrue(\strlen($result->getContent()) > 100);
     }
 
     public function testMultipleCheckInHeaders()
@@ -154,14 +154,14 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $result = $request->exec();
 
-        if (is_int($result)) {
-            var_dump($result);
+        if (\is_int($result)) {
+            dump($result);
         } else {
-            $this->assertTrue(is_array($result->getHeaders()));
-            $this->assertSame(null, $result->getCookies());
+            $this->assertTrue(\is_array($result->getHeaders()));
+            $this->assertNull($result->getCookies());
             $this->assertSame(404, $result->getInfo('http_code'));
             $this->assertSame(0, $result->getRequest()->hasError());
-            $this->assertSame(404, $result->getRequest()->getInfo(CURLINFO_HTTP_CODE));
+            $this->assertSame(404, $result->getRequest()->getInfo(\CURLINFO_HTTP_CODE));
             $result->getRequest()->close();
         }
     }
@@ -173,12 +173,14 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $request
             ->setProxy('75.157.242.104:59190')
             ->setNoFollowRedirection()
+            ->setOpt(\CURLOPT_CONNECTTIMEOUT, 1)
+            ->setOpt(\CURLOPT_TIMEOUT, 1)
         ;
 
         $result = $request->exec();
 
-        $this->assertTrue(is_int($result));
-        $this->assertStringContainsString('Failed to connect', $request->getError());
+        $this->assertTrue(\is_int($result));
+        $this->assertStringContainsString('timed out', $request->getError());
     }
 
     public function testAbortIfTooBig()
@@ -199,13 +201,13 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $result = $request->exec();
 
-        $this->assertTrue(strlen($result->getContent()) < 300);
+        $this->assertTrue(\strlen($result->getContent()) < 300);
     }
 
     public function testResponseFromCache()
     {
         $response = new ResponseFromCache(
-            'HTTP/1.1 200 OK'.PHP_EOL.PHP_EOL.'<!DOCTYPE html><html><body><p>Tests</p></body>',
+            'HTTP/1.1 200 OK'.\PHP_EOL.\PHP_EOL.'<!DOCTYPE html><html><body><p>Tests</p></body>',
             'https://piedweb.com/',
             ['content_type' => 'text/html; charset=UTF-8']
         );

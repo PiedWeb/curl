@@ -6,18 +6,14 @@ class Helper
 {
     /**
      * Return scheme from proxy string and remove Scheme From proxy.
-     *
-     * @param string $proxy
-     *
-     * @return string
      */
-    public static function getSchemeFrom(&$proxy)
+    public static function getSchemeFrom(string &$proxy): string
     {
         if (! preg_match('@^([a-z0-9]*)://@', $proxy, $match)) {
             return 'http://';
         }
         $scheme = $match[1].'://';
-        $proxy = substr($proxy, strlen($scheme));
+        $proxy = substr($proxy, \strlen($scheme));
 
         return $scheme;
     }
@@ -29,9 +25,9 @@ class Helper
      *
      * @param string $raw_headers Contain HTTP headers
      *
-     * @return bool|array an array on success or FALSE on failure
+     * @return array<int|string, string|string[]>
      */
-    public static function httpParseHeaders($raw_headers)
+    public static function httpParseHeaders(string $raw_headers): array
     {
         $headers = [];
         $key = '';
@@ -40,7 +36,7 @@ class Helper
             if (isset($h[1])) {
                 if (! isset($headers[$h[0]])) {
                     $headers[$h[0]] = trim($h[1]);
-                } elseif (is_array($headers[$h[0]])) {
+                } elseif (\is_array($headers[$h[0]])) {
                     $headers[$h[0]] = array_merge($headers[$h[0]], [trim($h[1])]);
                 } else {
                     $headers[$h[0]] = array_merge([$headers[$h[0]]], [trim($h[1])]);
@@ -67,17 +63,17 @@ class Helper
      * data of the header. When a parameter does not contain a value, but just
      * contains a key, this function will inject a key with a '' string value.
      *
-     * @param string|array $header header to parse into components
+     * @param string|string[] $header header to parse into components
      *
-     * @return array returns the parsed header values
+     * @return array<int, array<int|string, string>> returns the parsed header values
      */
-    public static function parseHeader($header)
+    public static function parseHeader($header): array
     {
         static $trimmed = "\"'  \n\t\r";
         $params = $matches = [];
         foreach (self::normalizeHeader($header) as $val) {
             $part = [];
-            foreach (preg_split('/;(?=([^"]*"[^"]*")*[^"]*$)/', $val) as $kvp) {
+            foreach (\Safe\preg_split('/;(?=([^"]*"[^"]*")*[^"]*$)/', $val) as $kvp) {
                 if (preg_match_all('/<[^>]+>|[^=]+/', $kvp, $matches)) {
                     $m = $matches[0];
                     if (isset($m[1])) {
@@ -102,13 +98,13 @@ class Helper
      * Converts an array of header values that may contain comma separated
      * headers into an array of headers with no comma separated values.
      *
-     * @param string|array $header header to normalize
+     * @param string|string[] $header header to normalize
      *
-     * @return array returns the normalized header field values
+     * @return string[] returns the normalized header field values
      */
-    protected static function normalizeHeader($header)
+    protected static function normalizeHeader(mixed $header): array
     {
-        if (! is_array($header)) {
+        if (! \is_array($header)) {
             return array_map('trim', explode(',', $header));
         }
         $result = [];
@@ -119,7 +115,7 @@ class Helper
 
                     continue;
                 }
-                foreach (preg_split('/,(?=([^"]*"[^"]*")*[^"]*$)/', $v) as $vv) {
+                foreach (\Safe\preg_split('/,(?=([^"]*"[^"]*")*[^"]*$)/', $v) as $vv) {
                     $result[] = trim($vv);
                 }
             }
@@ -128,12 +124,12 @@ class Helper
         return $result;
     }
 
-    public static function checkContentType($line, $expected = 'text/html')
+    public static function checkContentType(string $line, string $expected = 'text/html'): bool
     {
         return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, $expected);
     }
 
-    public static function checkStatusCode($line, $expected = 200)
+    public static function checkStatusCode(string $line, int $expected = 200): bool
     {
         return 0 === stripos(trim($line), 'http') && false !== stripos($line, ' '.$expected.' ');
     }

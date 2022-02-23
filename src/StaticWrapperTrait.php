@@ -4,6 +4,9 @@ namespace PiedWeb\Curl;
 
 trait StaticWrapperTrait
 {
+    /**
+     * @return int|string
+     */
     public static function get(string $url)
     {
         $request = new Request($url);
@@ -16,6 +19,6 @@ trait StaticWrapperTrait
 
         $response = $request->exec();
 
-        return is_int($response) ? $response : $response->getContent();
+        return \is_int($response) ? $response : $response->getContent();
     }
 }

@@ -3,21 +3,26 @@
 $finder = Symfony\Component\Finder\Finder::create()
     ->in([
         __DIR__ . '/src',
-        __DIR__ . '/tests',
+        __DIR__ . '/tests'
     ])
     ->name('*.php')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRules([
         '@PSR12' => true,
         '@PSR2' => true,
+        '@DoctrineAnnotation' => true,
+        '@Symfony' => true,
+        '@Symfony:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
-        'ordered_imports' => ['sortAlgorithm' => 'alpha'],
+        'array_indentation' => true,
+        'trim_array_spaces' => true,
+        'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'no_unused_imports' => true,
         'not_operator_with_successor_space' => true,
-        'trailing_comma_in_multiline_array' => true,
+        'trailing_comma_in_multiline' => true,
         'phpdoc_scalar' => true,
         'unary_operator_spaces' => true,
         'binary_operator_spaces' => true,
@@ -27,9 +32,7 @@ return PhpCsFixer\Config::create()
         'phpdoc_single_line_var_spacing' => true,
         'phpdoc_var_without_name' => true,
         'class_attributes_separation' => [
-            'elements' => [
-                'method',
-            ],
+            'elements' => ['const' => 'one','method' => 'one','property' => 'one'],
         ],
         'method_argument_space' => [
             'on_multiline' => 'ensure_fully_multiline',
@@ -37,4 +40,5 @@ return PhpCsFixer\Config::create()
         ],
         'single_trait_insert_per_statement' => true,
     ])
+    ->setRiskyAllowed(true)
     ->setFinder($finder);
