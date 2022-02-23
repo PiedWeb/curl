@@ -102,7 +102,7 @@ class Helper
      *
      * @return string[] returns the normalized header field values
      */
-    protected static function normalizeHeader(mixed $header): array
+    protected static function normalizeHeader($header): array
     {
         if (! \is_array($header)) {
             return array_map('trim', explode(',', $header));
