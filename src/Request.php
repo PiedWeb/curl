@@ -35,7 +35,7 @@ class Request
 
     public function __construct(?string $url = null)
     {
-        $this->handle = \Safe\curl_init(); // @phpstan-ignore-line
+        $this->handle = \Safe\curl_init();
         $this->setOpt(\CURLOPT_RETURNTRANSFER, 1);
 
         if (null !== $url) {
@@ -78,7 +78,7 @@ class Request
      */
     public function setOpt(int $option, $value): self
     {
-        curl_setopt($this->getHandle(), $option, $value); // @phpstan-ignore-line
+        curl_setopt($this->getHandle(), $option, $value);
 
         return $this;
     }
@@ -331,7 +331,7 @@ class Request
      */
     public function hasError(): int
     {
-        return curl_errno($this->getHandle()); // @phpstan-ignore-line
+        return curl_errno($this->getHandle());
     }
 
     /**
@@ -342,7 +342,7 @@ class Request
      */
     public function getError(): string
     {
-        return curl_error($this->getHandle()); // @phpstan-ignore-line
+        return curl_error($this->getHandle());
     }
 
     /**
@@ -385,6 +385,6 @@ class Request
      */
     public function close(): void
     {
-        curl_reset($this->getHandle()); // @phpstan-ignore-line
+        curl_reset($this->getHandle());
     }
 }
