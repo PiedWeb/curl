@@ -1,7 +1,3 @@
-<p align="center"><a href="https://dev.piedweb.com">
-<img src="https://raw.githubusercontent.com/PiedWeb/piedweb-devoluix-theme/master/src/img/logo_title.png" width="200" height="200" alt="Open Source Package" />
-</a></p>
-
 # Curl OOP Wrapper
 
 [![Latest Version](https://img.shields.io/github/tag/PiedWeb/Curl.svg?style=flat&label=release)](https://github.com/PiedWeb/Curl/tags)
@@ -20,14 +16,15 @@ For a more complex or abstracted curl wrapper, use [Guzzle](https://guzzle.readt
 
 Via [Packagist](https://img.shields.io/packagist/dt/piedweb/curl.svg?style=flat)
 
-``` bash
+```bash
 $ composer require piedweb/curl
 ```
 
 ## Usage
 
 Quick Example :
-``` php
+
+```php
 $url = 'https://piedweb.com';
 $request = new Request($url);
 $request
@@ -42,15 +39,19 @@ if ($result instanceof \PiedWeb\Curl\Response) {
 ```
 
 Static Wrapper Methods :
-``` php
-use PiedWeb\Curl\Request;
 
-Request::get($url); // @return string
+```php
+use PiedWeb\Curl\StaticRequest as Request;
+
+Request::get($url); // @return ?string
+Request::getRequest(); // @return PiedWeb\Curl\SRequest
+Request::resetRequest();
 
 ```
 
 All Other Methods :
-``` php
+
+```php
 use PiedWeb\Curl\Request;
 
 $r = new CurlRequest(?string $url);
@@ -111,13 +112,9 @@ $response = new ResponseFromCache(  // same methods than Response except getRequ
 
 ```
 
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
 ## Testing
 
-``` bash
+```bash
 $ composer test
 ```
 
@@ -133,3 +130,7 @@ Please see [contributing](https://dev.piedweb.com/contributing)
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+<p align="center"><a href="https://dev.piedweb.com">
+<img src="https://raw.githubusercontent.com/PiedWeb/piedweb-devoluix-theme/master/src/img/logo_title.png" width="200" height="200" alt="Open Source Package" />
+</a></p>
