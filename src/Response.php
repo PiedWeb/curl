@@ -19,6 +19,7 @@ class Response
 
     /**
      * @return self|int
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public static function get(Request $request)
     {
@@ -28,6 +29,10 @@ class Response
 
         if (false === $content) {
             return curl_errno($handle);
+        }
+
+        if (true === $content) {
+            throw new Exception('CURLOPT_RETURNTRANSFER and CURLOPT_HEADER was set to 0.');
         }
 
         $self = new self($request);
@@ -66,25 +71,25 @@ class Response
     /**
      * Return headers's data return by the request.
      *
-     * @param bool $returnArray True to get an array, false to get a string
-     *
-     * @return array<int|string, string|string[]>|string|null containing headers's data
+     * @return ?array<int|string, string|string[]> containing headers's data
      */
-    public function getHeaders(bool $returnArray = true)
+    public function getHeaders(): ?array
     {
         if ('' === $this->headers) {
             return null;
         }
 
-        if (! $returnArray) {
-            return $this->headers;
-        }
         $parsed = Helper::httpParseHeaders($this->headers);
         if ([] === $parsed) {
             throw new Exception('Failed to parse Headers `'.$this->headers.'`');
         }
 
-        return (array) $parsed;
+        return $parsed;
+    }
+
+    public function getRawHeaders(): string
+    {
+        return $this->headers;
     }
 
     /**
@@ -114,7 +119,7 @@ class Response
     public function getCookies()
     {
         $headers = $this->getHeaders();
-        if (null !== $headers && \is_array($headers) && isset($headers['Set-Cookie'])) {
+        if (null !== $headers && isset($headers['Set-Cookie'])) {
             if (\is_array($headers['Set-Cookie'])) {
                 return implode('; ', $headers['Set-Cookie']);
             } else {

@@ -59,11 +59,17 @@ class ResponseFromCache extends Response
         return (int) $this->getInfo('http_code');
     }
 
+    /**
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress NullableReturnStatement
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidNullableReturnType
+     */
     public function getContentType(): string
     {
         $headers = $this->getHeaders();
-        if (null !== $headers && isset($headers['content-type'])) { // @phpstan-ignore-line
-                return $headers['content-type']; // @phpstan-ignore-line
+        if (null !== $headers && isset($headers['content-type'])) {
+            return $headers['content-type']; // @phpstan-ignore-line
         }
 
         return $this->getInfo('content_type');  // @phpstan-ignore-line

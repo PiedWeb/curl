@@ -68,6 +68,7 @@ class Request
      *
      * @param int   $option cURL Predefined Constant
      * @param mixed $value
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function setOpt(int $option, $value): self
     {
@@ -250,12 +251,12 @@ class Request
 
     /**
      * @param int $tooBig Default 2000000 = 2000 Kbytes = 2 Mo
+     * @psalm-suppress UnusedClosureParam
      */
     public function setAbortIfTooBig(int $tooBig = 2000000): self
     {
         //$this->setOpt(CURLOPT_BUFFERSIZE, 128); // more progress info
         $this->setOpt(\CURLOPT_NOPROGRESS, false);
-        /* @psalm-suppress UnusedClosureParam */
         $this->setOpt(\CURLOPT_PROGRESSFUNCTION, function ($ch, $totalBytes, $receivedBytes) use ($tooBig) {
             if ($receivedBytes > $tooBig) {
                 return 1;
@@ -320,6 +321,7 @@ class Request
      * Return the last error number (curl_errno).
      *
      * @return int the error number or 0 (zero) if no error occurred
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function hasError(): int
     {
@@ -330,6 +332,7 @@ class Request
      * Return a string containing the last error for the current session (curl_error).
      *
      * @return string the error message or '' (the empty string) if no error occurred
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function getError(): string
     {
@@ -343,6 +346,7 @@ class Request
      *                 http://php.net/manual/en/function.curl-getinfo.php
      *
      * @return string|array<string, string> If opt is given, returns its value as a string. Otherwise, returns an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "request_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time"
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function getInfo(?int $opt = null)
     {
@@ -351,6 +355,7 @@ class Request
 
     /**
      * @return string|int
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function getRequestInfo(int $opt)
     {
@@ -359,6 +364,7 @@ class Request
 
     /**
      * @return string[]
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function getRequestInfos(): array
     {
@@ -368,6 +374,8 @@ class Request
     /**
      * Close the connexion
      * Call curl_reset function.
+     *
+     * @psalm-suppress InvalidArgument (for $handle)
      */
     public function close(): void
     {
