@@ -8,7 +8,7 @@ class ResponseFromCache extends Response
     protected $url;
 
     /**
-     * @param mixed  $headersSeparator could be a string (the separator between headers and content or FALSE
+     * @param mixed                     $headersSeparator could be a string (the separator between headers and content or FALSE
      * @param array<string, int|string> $info
      */
     public function __construct(

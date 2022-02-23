@@ -274,11 +274,10 @@ class Request
 
     public function checkHeader(CurlHandle $handle, string $line): int
     {
-            if (\call_user_func($this->filter, $line)) {
-                $this->optChangeDuringRequest = true;
-                $this->setOpt(\CURLOPT_NOBODY, 0);
-            }
-
+        if (\call_user_func($this->filter, $line)) {
+            $this->optChangeDuringRequest = true;
+            $this->setOpt(\CURLOPT_NOBODY, 0);
+        }
 
         return \strlen($line);
     }
