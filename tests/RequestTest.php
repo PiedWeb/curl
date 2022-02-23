@@ -155,7 +155,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->exec();
 
         $this->assertSame(0, $result);
-        $this->assertSame(404, $request->getRequestInfos()['http_code']);
+        $this->assertSame(404, $request->getInfos()['http_code']);
     }
 
     public function testProxy()

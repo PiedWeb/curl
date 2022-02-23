@@ -4,25 +4,20 @@ namespace PiedWeb\Curl;
 
 use CurlHandle;
 
-class Request
+class Request extends Curl
 {
-    use StaticWrapperTrait;
     use UserAgentTrait;
 
     public const RETURN_HEADER_ONLY = 2;
-
     public const RETURN_HEADER = 1;
+    private int $returnHeaders = 0;
 
-    private CurlHandle $handle;
 
     /** @var string contains targeted URL */
     private string $url;
 
     /** @var string contains current UA */
     private string $userAgent;
-
-    private int $returnHeaders = 0;
-
     /**
      * @var callable
      */
@@ -32,7 +27,6 @@ class Request
 
     public function __construct(?string $url = null)
     {
-        $this->handle = \Safe\curl_init();
         $this->setOpt(\CURLOPT_RETURNTRANSFER, 1);
 
         if (null !== $url) {
@@ -40,10 +34,6 @@ class Request
         }
     }
 
-    public function getHandle(): CurlHandle
-    {
-        return $this->handle;
-    }
 
     public function getUrl(): string
     {
@@ -59,20 +49,6 @@ class Request
     {
         $this->url = $url;
         $this->setOpt(\CURLOPT_URL, $url);
-
-        return $this;
-    }
-
-    /**
-     * Add a cURL's option.
-     *
-     * @param int   $option cURL Predefined Constant
-     * @param mixed $value
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function setOpt(int $option, $value): self
-    {
-        curl_setopt($this->getHandle(), $option, $value);
 
         return $this;
     }
@@ -124,9 +100,9 @@ class Request
      */
     public function setNoFollowRedirection(): self
     {
+        $this->setOpt(\CURLOPT_FOLLOWLOCATION, false)->setOpt(\CURLOPT_MAXREDIRS, 0);
+
         return $this
-            ->setOpt(\CURLOPT_FOLLOWLOCATION, false)
-            ->setOpt(\CURLOPT_MAXREDIRS, 0)
         ;
     }
 
@@ -283,10 +259,6 @@ class Request
         return \strlen($line);
     }
 
-    public function getOptChangeDuringRequest(): bool
-    {
-        return $this->optChangeDuringRequest;
-    }
     /**
      * Execute the request.
      *
@@ -294,7 +266,7 @@ class Request
      */
     public function exec(bool $optChange = false)
     {
-        $return = Response::get($this);
+        $return = Response::createFromRequest($this);
 
         // Permits to transform HEAD request in GET request
         if ($this->optChangeDuringRequest && false === $optChange) {
@@ -309,7 +281,7 @@ class Request
         return $return;
     }
 
-    public function getResponse(): ?Response
+    public function getContent(): ?string
     {
         $response = $this->exec();
 
@@ -317,71 +289,27 @@ class Request
             return null;
         }
 
-        return $response;
+        return $response->getContent();
     }
 
-    /**
-     * Return the last error number (curl_errno).
-     *
-     * @return int the error number or 0 (zero) if no error occurred
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function hasError(): int
-    {
-        return curl_errno($this->getHandle());
-    }
 
-    /**
-     * Return a string containing the last error for the current session (curl_error).
-     *
-     * @return string the error message or '' (the empty string) if no error occurred
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function getError(): string
-    {
-        return curl_error($this->getHandle());
-    }
-
-    /**
-     * Get information regarding the request.
-     *
-     * @param ?int $opt This may be one of the following constants:
-     *                 http://php.net/manual/en/function.curl-getinfo.php
-     *
-     * @return string|array<string, string> If opt is given, returns its value as a string. Otherwise, returns an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "request_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time"
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function getInfo(?int $opt = null)
-    {
-        return curl_getinfo($this->getHandle(), $opt); // @phpstan-ignore-line
-    }
 
     /**
      * @return string|int
      * @psalm-suppress InvalidArgument (for $handle)
      */
-    public function getRequestInfo(int $opt)
+    public function getInfo(int $opt)
     {
-        return curl_getinfo($this->getHandle(), $opt); // @phpstan-ignore-line
+        return parent::getCurlInfo($opt); // @phpstan-ignore-line
     }
 
     /**
      * @return string[]
      * @psalm-suppress InvalidArgument (for $handle)
      */
-    public function getRequestInfos(): array
+    public function getInfos(): array
     {
-        return curl_getinfo($this->handle);  // @phpstan-ignore-line
+        return parent::getCurlInfo();  // @phpstan-ignore-line
     }
 
-    /**
-     * Close the connexion
-     * Call curl_reset function.
-     *
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function close(): void
-    {
-        curl_reset($this->getHandle());
-    }
 }

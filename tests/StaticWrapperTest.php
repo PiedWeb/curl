@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PiedWeb\Curl\Test;
 
-use PiedWeb\Curl\Request;
+use PiedWeb\Curl\StaticRequest as Request;
 
 class StaticWrapperTest extends \PHPUnit\Framework\TestCase
 {

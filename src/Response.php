@@ -21,7 +21,7 @@ class Response
      * @return self|int
      * @psalm-suppress InvalidArgument (for $handle)
      */
-    public static function get(Request $request)
+    public static function createFromRequest(Request $request)
     {
         $handle = $request->getHandle();
 
@@ -41,14 +41,14 @@ class Response
             $self->headers = $content;
         } else {
             if (Request::RETURN_HEADER === $request->mustReturnHeaders()) { // Remove headers from response
-                $self->headers = substr($content, 0, $sHeaders = (int) $request->getRequestInfo(\CURLINFO_HEADER_SIZE));
+                $self->headers = substr($content, 0, $sHeaders = (int) $request->getInfo(\CURLINFO_HEADER_SIZE));
                 $content = substr($content, $sHeaders);
             }
 
             $self->content = $content;
         }
 
-        $self->info = $request->getRequestInfos();
+        $self->info = $request->getInfos();
 
         return $self;
     }
