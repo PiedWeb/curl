@@ -279,7 +279,10 @@ class Request
         return $this;
     }
 
-    public function checkHeader(CurlHandle $handle, string $line): int
+    /**
+     * @param resource $handle
+     */
+    public function checkHeader($handle, string $line): int
     {
         if (\call_user_func($this->filter, $line)) {
             $this->optChangeDuringRequest = true;
