@@ -25,10 +25,10 @@ class Response
     {
         $handle = $request->getHandle();
 
-        $content = curl_exec($handle);
+        $content = curl_exec($handle); // @phpstan-ignore-line
 
         if (false === $content) {
-            return curl_errno($handle);
+            return curl_errno($handle); // @phpstan-ignore-line
         }
 
         if (true === $content) {

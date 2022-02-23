@@ -13,7 +13,10 @@ class Request
 
     public const RETURN_HEADER = 1;
 
-    private CurlHandle $handle;
+    /**
+     * @var resource // When dropping 7.4 set CurlHandle
+     */
+    private $handle;
 
     /** @var string contains targeted URL */
     private string $url;
@@ -32,7 +35,7 @@ class Request
 
     public function __construct(?string $url = null)
     {
-        $this->handle = \Safe\curl_init();
+        $this->handle = \Safe\curl_init(); // @phpstan-ignore-line
         $this->setOpt(\CURLOPT_RETURNTRANSFER, 1);
 
         if (null !== $url) {
@@ -40,7 +43,10 @@ class Request
         }
     }
 
-    public function getHandle(): CurlHandle
+    /**
+     * @return resource // When dropping 7.4 set CurlHandle
+     */
+    public function getHandle()
     {
         return $this->handle;
     }
@@ -72,7 +78,7 @@ class Request
      */
     public function setOpt(int $option, $value): self
     {
-        curl_setopt($this->handle, $option, $value);
+        curl_setopt($this->getHandle(), $option, $value); // @phpstan-ignore-line
 
         return $this;
     }
@@ -325,7 +331,7 @@ class Request
      */
     public function hasError(): int
     {
-        return curl_errno($this->handle);
+        return curl_errno($this->getHandle()); // @phpstan-ignore-line
     }
 
     /**
@@ -336,7 +342,7 @@ class Request
      */
     public function getError(): string
     {
-        return curl_error($this->handle);
+        return curl_error($this->getHandle()); // @phpstan-ignore-line
     }
 
     /**
@@ -379,6 +385,6 @@ class Request
      */
     public function close(): void
     {
-        curl_reset($this->handle);
+        curl_reset($this->getHandle()); // @phpstan-ignore-line
     }
 }
