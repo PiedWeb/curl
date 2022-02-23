@@ -31,8 +31,6 @@ jobs:
           dependency-versions: highest
           composer-options: --prefer-dist --${{ matrix.stability }} --no-interaction
 
-      - name: Build container
-        run: cd packages/skeleton && php ./bin/console cache:clear
 
       - name: PHPStan
         run: vendor/bin/phpstan --memory-limit=1G analyse --error-format=github --debug
@@ -58,9 +56,6 @@ jobs:
 
       - name: Run composer install
         run: composer install -n --prefer-dist
-
-      - name: Build container
-        run: cd packages/skeleton && php ./bin/console cache:clear
 
       - name: Run psalm
         run: ./vendor/bin/psalm --output-format=github --shepherd
