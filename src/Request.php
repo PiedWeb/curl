@@ -13,10 +13,7 @@ class Request
 
     public const RETURN_HEADER = 1;
 
-    /**
-     * @var resource // When dropping 7.4 set CurlHandle
-     */
-    private $handle;
+    private CurlHandle $handle;
 
     /** @var string contains targeted URL */
     private string $url;
@@ -43,10 +40,7 @@ class Request
         }
     }
 
-    /**
-     * @return resource // When dropping 7.4 set CurlHandle
-     */
-    public function getHandle()
+    public function getHandle(): CurlHandle
     {
         return $this->handle;
     }
@@ -145,7 +139,7 @@ class Request
         $this->setOpt(\CURLOPT_HEADER, 1);
         $this->returnHeaders = $only ? self::RETURN_HEADER_ONLY : self::RETURN_HEADER;
 
-        if ($only) {
+        if ($only === true) {
             $this->setOpt(\CURLOPT_RETURNTRANSFER, 0);
             $this->setOpt(\CURLOPT_NOBODY, 1);
         }
@@ -279,10 +273,7 @@ class Request
         return $this;
     }
 
-    /**
-     * @param resource $handle
-     */
-    public function checkHeader($handle, string $line): int
+    public function checkHeader(CurlHandle $handle, string $line): int
     {
         if (\call_user_func($this->filter, $line)) {
             $this->optChangeDuringRequest = true;
@@ -292,6 +283,10 @@ class Request
         return \strlen($line);
     }
 
+    public function getOptChangeDuringRequest(): bool
+    {
+        return $this->optChangeDuringRequest;
+    }
     /**
      * Execute the request.
      *
@@ -304,7 +299,6 @@ class Request
         // Permits to transform HEAD request in GET request
         if ($this->optChangeDuringRequest && false === $optChange) {
             $this->optChangeDuringRequest = true;
-
             return $this->exec(true);
         }
 
@@ -351,7 +345,7 @@ class Request
     /**
      * Get information regarding the request.
      *
-     * @param int $opt This may be one of the following constants:
+     * @param ?int $opt This may be one of the following constants:
      *                 http://php.net/manual/en/function.curl-getinfo.php
      *
      * @return string|array<string, string> If opt is given, returns its value as a string. Otherwise, returns an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "request_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time"
@@ -359,7 +353,7 @@ class Request
      */
     public function getInfo(?int $opt = null)
     {
-        return curl_getinfo($this->handle, $opt); // @phpstan-ignore-line
+        return curl_getinfo($this->getHandle(), $opt); // @phpstan-ignore-line
     }
 
     /**
@@ -368,7 +362,7 @@ class Request
      */
     public function getRequestInfo(int $opt)
     {
-        return curl_getinfo($this->handle, $opt); // @phpstan-ignore-line
+        return curl_getinfo($this->getHandle(), $opt); // @phpstan-ignore-line
     }
 
     /**

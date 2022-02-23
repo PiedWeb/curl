@@ -154,16 +154,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $result = $request->exec();
 
-        if (\is_int($result)) {
-            dump($result);
-        } else {
-            $this->assertTrue(\is_array($result->getHeaders()));
-            $this->assertNull($result->getCookies());
-            $this->assertSame(404, $result->getInfo('http_code'));
-            $this->assertSame(0, $result->getRequest()->hasError());
-            $this->assertSame(404, $result->getRequest()->getInfo(\CURLINFO_HTTP_CODE));
-            $result->getRequest()->close();
-        }
+        $this->assertSame(0, $result);
+        $this->assertSame(404, $request->getRequestInfos()['http_code']);
     }
 
     public function testProxy()

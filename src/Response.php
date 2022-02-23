@@ -32,7 +32,7 @@ class Response
         }
 
         if (true === $content) {
-            throw new Exception('CURLOPT_RETURNTRANSFER and CURLOPT_HEADER was set to 0.');
+            return 0; //throw new Exception('CURLOPT_RETURNTRANSFER and CURLOPT_HEADER was set to 0.');
         }
 
         $self = new self($request);
