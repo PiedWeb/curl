@@ -12,6 +12,7 @@ class Helper
         if (! preg_match('@^([a-z0-9]*)://@', $proxy, $match)) {
             return 'http://';
         }
+
         $scheme = $match[1].'://';
         $proxy = substr($proxy, \strlen($scheme));
 
@@ -41,6 +42,7 @@ class Helper
                 } else {
                     $headers[$h[0]] = array_merge([$headers[$h[0]]], [trim($h[1])]);
                 }
+
                 $key = $h[0];
             } else {
                 if ("\t" == substr($h[0], 0, 1)) {
@@ -67,7 +69,7 @@ class Helper
      *
      * @return array<int, array<int|string, string>> returns the parsed header values
      */
-    public static function parseHeader($header): array
+    public static function parseHeader(array|string $header): array
     {
         static $trimmed = "\"'  \n\t\r";
         $params = $matches = [];
@@ -83,7 +85,8 @@ class Helper
                     }
                 }
             }
-            if ($part) {
+
+            if ([] !== $part) {
                 $params[] = $part;
             }
         }
@@ -102,19 +105,21 @@ class Helper
      *
      * @return string[] returns the normalized header field values
      */
-    protected static function normalizeHeader($header): array
+    protected static function normalizeHeader(array|string $header): array
     {
         if (! \is_array($header)) {
             return array_map('trim', explode(',', $header));
         }
+
         $result = [];
         foreach ($header as $value) {
             foreach ((array) $value as $v) {
-                if (false === strpos($v, ',')) {
+                if (! str_contains($v, ',')) {
                     $result[] = $v;
 
                     continue;
                 }
+
                 foreach (\Safe\preg_split('/,(?=([^"]*"[^"]*")*[^"]*$)/', $v) as $vv) {
                     $result[] = trim($vv);
                 }

@@ -4,54 +4,19 @@ namespace PiedWeb\Curl;
 
 use CurlHandle;
 
-class Request extends Curl
+class ExtendedClient extends Client
 {
     use UserAgentTrait;
 
-    public const RETURN_HEADER_ONLY = 2;
-    public const RETURN_HEADER = 1;
-    private int $returnHeaders = 0;
-
-
-    /** @var string contains targeted URL */
-    private string $url;
-
     /** @var string contains current UA */
     private string $userAgent;
+
     /**
      * @var callable
      */
     private $filter;
 
-    private bool $optChangeDuringRequest = false;
-
-    public function __construct(?string $url = null)
-    {
-        $this->setOpt(\CURLOPT_RETURNTRANSFER, 1);
-
-        if (null !== $url) {
-            $this->setUrl($url);
-        }
-    }
-
-
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    /**
-     * Change the URL to cURL.
-     *
-     * @param string $url to request
-     */
-    public function setUrl(string $url): self
-    {
-        $this->url = $url;
-        $this->setOpt(\CURLOPT_URL, $url);
-
-        return $this;
-    }
+    private int $optChangeDuringRequest = 0;
 
     /**
      * A short way to set some classic options to cURL a web page.
@@ -84,11 +49,6 @@ class Request extends Curl
     {
         $this->setOpt(\CURLOPT_SSL_VERIFYHOST, 0);
         $this->setOpt(\CURLOPT_SSL_VERIFYPEER, 0);
-
-        if (! $this->returnHeaders) {
-            $this->setOpt(\CURLOPT_HEADER, 0);
-        }
-
         $this->setDefaultGetOptions(5, 10, 600, true, 1);
         $this->setEncodingGzip();
 
@@ -100,38 +60,23 @@ class Request extends Curl
      */
     public function setNoFollowRedirection(): self
     {
-        $this->setOpt(\CURLOPT_FOLLOWLOCATION, false)->setOpt(\CURLOPT_MAXREDIRS, 0);
-
-        return $this
-        ;
-    }
-
-    /**
-     * Call it if you want header informations.
-     * After self::exec(), you would have this informations with getHeader();.
-     */
-    public function setReturnHeader(bool $only = false): self
-    {
-        $this->setOpt(\CURLOPT_HEADER, 1);
-        $this->returnHeaders = $only ? self::RETURN_HEADER_ONLY : self::RETURN_HEADER;
-
-        if ($only === true) {
-            $this->setOpt(\CURLOPT_RETURNTRANSFER, 0);
-            $this->setOpt(\CURLOPT_NOBODY, 1);
-        }
+        $this->setOpt(\CURLOPT_FOLLOWLOCATION, false);
+        $this->setOpt(\CURLOPT_MAXREDIRS, 0);
 
         return $this;
     }
 
-    public function mustReturnHeaders(): int
+    public function setReturnOnlyHeader(): self
     {
-        return $this->returnHeaders;
+        $this->setOpt(\CURLOPT_NOBODY, 1);
+
+        return $this;
     }
 
     /**
      * An self::setOpt()'s alias to add a cookie to your request.
      */
-    public function setCookie(string $cookie): self
+    public function setCookie(?string $cookie): self
     {
         $this->setOpt(\CURLOPT_COOKIE, $cookie);
 
@@ -169,10 +114,8 @@ class Request extends Curl
      * A short way to set post's options to cURL a web page.
      *
      * @param mixed $post if it's an array, will be converted via http build query
-     *
-     * @return self
      */
-    public function setPost($post)
+    public function setPost($post): self
     {
         $this->setOpt(\CURLOPT_CUSTOMREQUEST, 'POST');
         $this->setOpt(\CURLOPT_POST, 1);
@@ -183,7 +126,7 @@ class Request extends Curl
 
     /**
      * If you want to request the URL and hope get the result gzipped.
-     * The output will be automatically uncompress with exec();.
+     * The output will be automatically uncompress with request();.
      */
     public function setEncodingGzip(): self
     {
@@ -216,8 +159,6 @@ class Request extends Curl
      */
     public function setDownloadOnlyIf(callable $func): self
     {
-        $this->setReturnHeader();
-
         $this->filter = $func;
         $this->setOpt(\CURLOPT_HEADERFUNCTION, [$this, 'checkHeader']);
         $this->setOpt(\CURLOPT_NOBODY, 1);
@@ -226,15 +167,15 @@ class Request extends Curl
     }
 
     /**
-     * @param int $tooBig Default 2000000 = 2000 Kbytes = 2 Mo
+     * @param int $maxBytes Default 2000000 = 2000 Kbytes = 2 Mo
      * @psalm-suppress UnusedClosureParam
      */
-    public function setAbortIfTooBig(int $tooBig = 2000000): self
+    public function setMaximumResponseSize(int $maxBytes = 2000000): self
     {
         //$this->setOpt(CURLOPT_BUFFERSIZE, 128); // more progress info
         $this->setOpt(\CURLOPT_NOPROGRESS, false);
-        $this->setOpt(\CURLOPT_PROGRESSFUNCTION, function ($ch, $totalBytes, $receivedBytes) use ($tooBig) {
-            if ($receivedBytes > $tooBig) {
+        $this->setOpt(\CURLOPT_PROGRESSFUNCTION, function ($handle, $totalBytes, $receivedBytes) use ($maxBytes) {
+            if ($totalBytes > $maxBytes || $receivedBytes > $maxBytes) {
                 return 1;
             }
         });
@@ -251,9 +192,13 @@ class Request extends Curl
 
     public function checkHeader(CurlHandle $handle, string $line): int
     {
+        $this->error = 92832;
+        $this->errorMessage = 'Aborted because user check in headers';
+
         if (\call_user_func($this->filter, $line)) {
-            $this->optChangeDuringRequest = true;
-            $this->setOpt(\CURLOPT_NOBODY, 0);
+            ++$this->optChangeDuringRequest;
+            $this->setOpt(\CURLOPT_NOBODY, false);
+            $this->resetError();
         }
 
         return \strlen($line);
@@ -261,55 +206,26 @@ class Request extends Curl
 
     /**
      * Execute the request.
-     *
-     * @return Response|int corresponding to the curl error
      */
-    public function exec(bool $optChange = false)
+    public function request(?string $url = null): Response
     {
-        $return = Response::createFromRequest($this);
+        $response = parent::request($url);
 
         // Permits to transform HEAD request in GET request
-        if ($this->optChangeDuringRequest && false === $optChange) {
-            $this->optChangeDuringRequest = true;
-            return $this->exec(true);
+        if (1 === $this->optChangeDuringRequest) {
+            return $this->request();
         }
 
-        if ($return instanceof Response && ($effectiveUrl = $return->getEffectiveUrl()) !== null) {
+        $this->optChangeDuringRequest = 0;
+
+        if (($effectiveUrl = $response->getUrl()) !== null) {
             $this->setReferer($effectiveUrl);
         }
 
-        return $return;
-    }
-
-    public function getContent(): ?string
-    {
-        $response = $this->exec();
-
-        if (\is_int($response)) {
-            return null;
+        if (($cookies = $response->getCookies()) !== null) {
+            $this->setCookie($cookies);
         }
 
-        return $response->getContent();
+        return $response;
     }
-
-
-
-    /**
-     * @return string|int
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function getInfo(int $opt)
-    {
-        return parent::getCurlInfo($opt); // @phpstan-ignore-line
-    }
-
-    /**
-     * @return string[]
-     * @psalm-suppress InvalidArgument (for $handle)
-     */
-    public function getInfos(): array
-    {
-        return parent::getCurlInfo();  // @phpstan-ignore-line
-    }
-
 }

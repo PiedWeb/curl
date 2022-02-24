@@ -6,61 +6,54 @@ use Exception;
 
 class Response
 {
-    /** @var Request */
-    protected $request;
-
     protected string $headers = '';
 
-    /** @var string * */
-    protected string $content;
+    /** @var ?array<int|string, string|string[]> */
+    protected ?array $headersParsed = null;
 
-    /** @var array<string, int|string>  an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "request_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time" */
+    /** @var string * */
+    protected string $content = '';
+
+    /** @var array<string, int|string>  an associative array with the following elements (which correspond to opt): "url" "content_type" "http_code" "header_size" "client_size" "filetime" "ssl_verify_result" "redirect_count" "total_time" "namelookup_time" "connect_time" "pretransfer_time" "size_upload" "size_download" "speed_download" "speed_upload" "download_content_length" "upload_content_length" "starttransfer_time" "redirect_time" */
     protected $info;
 
+    protected int $error = 0;
+
+    protected string $errorMessage;
+
     /**
-     * @return self|int
      * @psalm-suppress InvalidArgument (for $handle)
      */
-    public static function createFromRequest(Request $request)
+    public static function createFromClient(Client $client, bool|string $content): self
     {
-        $handle = $request->getHandle();
+        $self = new self();
+        $self->info = $client->getCurlInfos();
+        $self->error = $client->getError();
+        $self->errorMessage = $client->getErrorMessage();
 
-        $content = curl_exec($handle);
-
-        if (false === $content) {
-            return curl_errno($handle);
+        if (\is_bool($content)) {
+            return $self;
         }
 
-        if (true === $content) {
-            return 0; //throw new Exception('CURLOPT_RETURNTRANSFER and CURLOPT_HEADER was set to 0.');
-        }
-
-        $self = new self($request);
-
-        if (Request::RETURN_HEADER_ONLY === $request->mustReturnHeaders()) {
-            $self->headers = $content;
-        } else {
-            if (Request::RETURN_HEADER === $request->mustReturnHeaders()) { // Remove headers from response
-                $self->headers = substr($content, 0, $sHeaders = (int) $request->getInfo(\CURLINFO_HEADER_SIZE));
-                $content = substr($content, $sHeaders);
-            }
-
-            $self->content = $content;
-        }
-
-        $self->info = $request->getInfos();
+        $self->headers = substr($content, 0, $sHeaders = (int) $client->getCurlInfo(\CURLINFO_HEADER_SIZE));
+        $self->content = substr($content, $sHeaders);
 
         return $self;
     }
 
-    private function __construct(Request $request)
+    public function getError(): int
     {
-        $this->request = $request;
+        return $this->error;
     }
 
-    public function getRequest(): ?Request
+    public function getErrorMessage(): string
     {
-        return $this->request;
+        return $this->errorMessage;
+    }
+
+    public function getBody(): string
+    {
+        return $this->content;
     }
 
     public function getContent(): string
@@ -69,12 +62,16 @@ class Response
     }
 
     /**
-     * Return headers's data return by the request.
+     * Return headers's data return by the client.
      *
      * @return ?array<int|string, string|string[]> containing headers's data
      */
     public function getHeaders(): ?array
     {
+        if (null !== $this->headersParsed) {
+            return $this->headersParsed;
+        }
+
         if ('' === $this->headers) {
             return null;
         }
@@ -84,7 +81,29 @@ class Response
             throw new Exception('Failed to parse Headers `'.$this->headers.'`');
         }
 
-        return $parsed;
+        return $this->headersParsed = $parsed;
+    }
+
+    /**
+     * @return string|string[]|null
+     */
+    public function getHeader(string $name)
+    {
+        return ($headers = $this->getHeaders()) !== null
+            && isset($headers[$name]) ? $headers[$name] : null;
+    }
+
+    public function getHeaderLine(string $name): ?string
+    {
+        if (($header = $this->getHeader($name)) === null) {
+            return null;
+        }
+
+        if (\is_array($header)) {
+            return implode(', ', $header);
+        }
+
+        return $header;
     }
 
     public function getRawHeaders(): string
@@ -95,28 +114,17 @@ class Response
     /**
      * @return string requested url
      */
-    public function getUrl(): string
-    {
-        return $this->request->getUrl();
-    }
-
-    /**
-     * Return current effective url.
-     *
-     * @return string
-     */
-    public function getEffectiveUrl(): ?string
+    public function getUrl(): ?string
     {
         return isset($this->info['url']) ? (string) $this->info['url'] : null;
-        //curl_getinfo(self::$ch, CURLINFO_EFFECTIVE_URL);
     }
 
     /**
-     * Return the cookie(s) returned by the request (if there are).
+     * Return the cookie(s).
      *
      * @return string|null containing the cookies
      */
-    public function getCookies()
+    public function getCookies(): ?string
     {
         $headers = $this->getHeaders();
         if (null !== $headers && isset($headers['Set-Cookie'])) {
@@ -131,7 +139,7 @@ class Response
     }
 
     /**
-     * Get information regarding the request.
+     * Get information (curl info).
      *
      * @param string $key to get
      *
@@ -139,7 +147,7 @@ class Response
      */
     public function getInfo(?string $key = null)
     {
-        return $key ? (isset($this->info[$key]) ? $this->info[$key] : null) : $this->info;
+        return null !== $key && '' !== $key ? (isset($this->info[$key]) ? $this->info[$key] : null) : $this->info;
     }
 
     public function getStatusCode(): int
@@ -152,10 +160,10 @@ class Response
         return (string) $this->info['content_type'];
     }
 
-    public function getMimeType(): ?string
+    public function getMimeType(): string
     {
         $headers = Helper::parseHeader($this->getContentType());
 
-        return $headers[0][0] ?? null;
+        return $headers[0][0] ?? '';
     }
 }

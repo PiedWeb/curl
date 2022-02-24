@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PiedWeb\Curl\Test;
 
+use PiedWeb\Curl\ExtendedClient as Client;
 use PiedWeb\Curl\Helper;
-use PiedWeb\Curl\Request;
 
 class HelperTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,18 +36,15 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     public function testHeaderParsing()
     {
         $url = 'https://piedweb.com/';
-        $request = new Request($url);
+        $request = new Client($url);
         $request
             ->setDefaultGetOptions()
-            ->setReturnHeader()
+            ->setReturnOnlyHeader()
             ->setDesktopUserAgent()
         ;
-        $result = $request->exec();
+        $result = $request->request();
 
-        $headers = $result->getRawHeaders(false);
-        $this->assertTrue(\is_string($headers));
-
-        //var_dump(Helper::httpParseHeaders($headers));
-        //var_dump(Helper::parseHeader($headers));
+        $headers = $result->getRawHeaders();
+        $this->assertStringContainsString('200', substr($headers, 0, 10));
     }
 }

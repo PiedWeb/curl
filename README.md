@@ -26,13 +26,13 @@ Quick Example :
 
 ```php
 $url = 'https://piedweb.com';
-$request = new Request($url);
+$request = new \PiedWeb\Curl\ExtendedCliend($url);
 $request
     ->setDefaultSpeedOptions(true)
     ->setDownloadOnlyIf('PiedWeb\Curl\Helper::checkContentType') // 'PiedWeb\Curl\Helper::checkStatusCode'
     ->setDesktopUserAgent()
 ;
-$result = $request->exec();
+$result = $request->request();
 if ($result instanceof \PiedWeb\Curl\Response) {
     $content = $this->getContent();
 }
@@ -41,20 +41,19 @@ if ($result instanceof \PiedWeb\Curl\Response) {
 Static Wrapper Methods :
 
 ```php
-use PiedWeb\Curl\StaticRequest as Request;
+use PiedWeb\Curl\StaticClient as Client;
 
-Request::get($url); // @return ?string
-Request::getRequest(); // @return PiedWeb\Curl\SRequest
-Request::resetRequest();
+Client::request($url); // @return ?string
+Client::get(); // @return PiedWeb\Curl\ExtendedClient
+Client::reset()
 
 ```
 
 All Other Methods :
 
 ```php
-use PiedWeb\Curl\Request;
 
-$r = new CurlRequest(?string $url);
+$r = new PiedWeb\Curl\ExtendedClient(?string $url);
 $r
     ->setOpt(CURLOPT_*, mixed 'value')
 
@@ -75,7 +74,7 @@ $r
         ->getUserAgent() // @return string
 
     ->setDownloadOnlyIf(callable $func) // @param $ContentType can be a String or an Array
-    ->setAbortIfTooBig(int $tooBig = 200000) // @defaut 2Mo
+    ->setMaximumResponseSize(int $tooBig = 200000) // @defaut 2Mo
     ->setDownloadOnly($range = '0-500')
 
     ->setPost(array $post)
@@ -87,18 +86,17 @@ $r
     ->setUrl($url)
         ->getUrl()
 
-$response = $r->exec(); // @return PiedWeb\Curl\Response or int corresponding to the curl error
+$response = $r->request(); // @return PiedWeb\Curl\Response or int corresponding to the curl error
 
 $response->getUrl(); // @return string
 $response->getContentType(); // @return string
 $response->getContent(); // @return string
 $response->getHeaders($returnArray = true); // @return array Response Header (or in a string if $returnArray is set to false)
 $response->getCookies(); // @return string
-$response->getEffectiveUrl(); // @return string
+$response->getUrl(); // @return string
 
-$r->hasError(); // Equivalent to curl function curl_errno
-$r->getError(); // .. curl_error
-$r->getInfo(?string $key = null); // ... curl_getinfo or getting directly the $key value
+$response->getError(); // Equivalent to curl function curl_errno
+$response->getErrorMessage(); // .. curl_error
 
 
 use PiedWeb\Curl\ResponseFromCache;
@@ -110,12 +108,6 @@ $response = new ResponseFromCache(  // same methods than Response except getRequ
     $headers = PHP_EOL.PHP_EOL
 );
 
-```
-
-## Testing
-
-```bash
-$ composer test
 ```
 
 ## Contributing

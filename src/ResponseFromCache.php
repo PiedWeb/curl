@@ -4,8 +4,7 @@ namespace PiedWeb\Curl;
 
 class ResponseFromCache extends Response
 {
-    /** @var string */
-    protected $url;
+    protected string $url;
 
     /**
      * @param mixed                     $headersSeparator could be a string (the separator between headers and content or FALSE
@@ -33,24 +32,14 @@ class ResponseFromCache extends Response
         $this->url = (string) $url;
     }
 
-    public function getRequest(): ?Request
-    {
-        return null; // todo serialize request to return it even from cache
-    }
-
     public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    public function getEffectiveUrl(): ?string
     {
         return $this->url;
     }
 
     public function getStatusCode(): int
     {
-        if ($this->headers) {
+        if ('' !== $this->headers) {
             $headers = $this->getHeaders();
 
             return (int) explode(' ', $headers[0], 2)[1]; // @phpstan-ignore-line

@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php": "^8.0",
+    "php": ">=8.0",
     "thecodingmachine/safe": "^2.1"
   },
   "require-dev": {
@@ -26,12 +26,6 @@
     "symfony/debug": "^4.4",
     "vimeo/psalm": "^4",
     "symfony/var-dumper": "^6.0"
-  },
-  "scripts": {
-    "psalm": "vendor/bin/psalm --no-suggestions --no-cache",
-    "stan": "vendor/bin/phpstan analyze src",
-    "test": "vendor/bin/phpunit --stop-on-failure",
-    "format": "vendor/bin/php-cs-fixer fix"
   },
   "autoload": {
     "psr-4": {
