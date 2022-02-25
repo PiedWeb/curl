@@ -67,7 +67,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $result = $request->request();
 
         $this->assertSame('https://piedweb.com/', $result->getUrl());
-        $this->assertSame($url, $request->getUrl());
+        $this->assertSame($url, $request->getTarget());
         $this->assertTrue(\strlen($result->getContent()) > 10);
     }
 
