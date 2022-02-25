@@ -115,13 +115,13 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             ->setDesktopUserAgent()
             ->setMobileUserAgent()
             ->setLessJsUserAgent()
-            ->setUrl($url)
+            ->setTarget($url)
             ->setDownloadOnlyIf([$checkHeaders, 'check'])
         ;
 
         $result = $request->request();
 
-        $this->assertSame($request->getUrl(), $url);
+        $this->assertSame($request->getTarget(), $url);
         $this->assertSame($request->getUserAgent(), $request->lessJsUserAgent);
 
         $this->assertSame(200, $result->getStatusCode());
