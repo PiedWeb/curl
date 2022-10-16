@@ -40,7 +40,7 @@ class Helper
                 } elseif (\is_array($headers[$h[0]])) {
                     $headers[$h[0]] = array_merge($headers[$h[0]], [trim($h[1])]);
                 } else {
-                    $headers[$h[0]] = array_merge([$headers[$h[0]]], [trim($h[1])]);
+                    $headers[$h[0]] = [...[$headers[$h[0]]], ...[trim($h[1])]];
                 }
 
                 $key = $h[0];
@@ -131,11 +131,11 @@ class Helper
 
     public static function checkContentType(string $line, string $expected = 'text/html'): bool
     {
-        return 0 === stripos(trim($line), 'content-type') && false !== stripos($line, $expected);
+        return str_starts_with(strtolower(trim($line)), 'content-type') && str_contains($line, $expected);
     }
 
     public static function checkStatusCode(string $line, int $expected = 200): bool
     {
-        return 0 === stripos(trim($line), 'http') && false !== stripos($line, ' '.$expected.' ');
+        return str_starts_with(strtolower(trim($line)), 'http') && str_contains($line, ' '.$expected.' ');
     }
 }

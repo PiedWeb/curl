@@ -14,7 +14,7 @@ class ResponseFromCache extends Response
         string $filePathOrContent,
         ?string $url = null,
         array $info = [],
-        $headersSeparator = \PHP_EOL.\PHP_EOL
+        mixed $headersSeparator = \PHP_EOL.\PHP_EOL
     ) {
         $content = file_exists($filePathOrContent) ? file_get_contents($filePathOrContent) : $filePathOrContent;
 
@@ -23,7 +23,7 @@ class ResponseFromCache extends Response
         }
 
         if (false !== $headersSeparator && \is_string($headersSeparator) && '' !== $headersSeparator) {
-            list($this->headers, $this->content) = explode($headersSeparator, $content, 2);
+            [$this->headers, $this->content] = explode($headersSeparator, $content, 2);
         } else {
             $this->content = $content;
         }

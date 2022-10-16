@@ -127,15 +127,18 @@ class Response
     public function getCookies(): ?string
     {
         $headers = $this->getHeaders();
-        if (null !== $headers && isset($headers['Set-Cookie'])) {
-            if (\is_array($headers['Set-Cookie'])) {
-                return implode('; ', $headers['Set-Cookie']);
-            } else {
-                return $headers['Set-Cookie'];
-            }
+        $setCookie = null !== $headers
+            ? $headers['Set-Cookie'] ?? $headers['set-cookie'] ?? null
+            : null;
+        if (null === $setCookie) {
+            return null;
         }
 
-        return null;
+        if (\is_array($setCookie)) {
+            return implode('; ', $setCookie);
+        }
+
+        return $setCookie;
     }
 
     /**
@@ -147,7 +150,7 @@ class Response
      */
     public function getInfo(?string $key = null)
     {
-        return null !== $key && '' !== $key ? (isset($this->info[$key]) ? $this->info[$key] : null) : $this->info;
+        return null !== $key && '' !== $key ? ($this->info[$key] ?? null) : $this->info;
     }
 
     public function getStatusCode(): int
