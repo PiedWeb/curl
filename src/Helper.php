@@ -47,8 +47,8 @@ class Helper
                 }
 
                 $key = $h[0];
-            } elseif ("\t" == substr($h[0], 0, 1)) {
-                $headers[$key] .= "\r\n\t".trim($h[0]); // @phpstan-ignore-line
+            } elseif (str_starts_with($h[0], "\t")) {
+                $headers[$key] .= "\r\n\t".trim($h[0]);
             } elseif (! $key) {
                 $headers[0] = trim($h[0]);
             }
