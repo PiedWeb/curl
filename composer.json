@@ -17,7 +17,8 @@
   ],
   "require": {
     "php": ">=8.2",
-    "thecodingmachine/safe": "^2.1"
+    "thecodingmachine/safe": "^2.1",
+    "kelvinzer0/curl-impersonate-php": "^3.2"
   },
   "autoload": {
     "psr-4": {
